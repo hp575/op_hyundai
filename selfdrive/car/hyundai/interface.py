@@ -133,7 +133,7 @@ class CarInterface(CarInterfaceBase):
     elif candidate == CAR.NEXO: # fix PolorBear - 22.06.05
       ret.mass = 1885. + STD_CARGO_KG
       ret.wheelbase = 2.79
-      ret.centerToFront = ret.wheelbase * 0.4
+      ret.steerRatio = 15.3
       tire_stiffness_factor = 0.385
 
     # Kia

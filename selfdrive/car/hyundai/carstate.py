@@ -44,6 +44,7 @@ class CarState(CarStateBase):
 
     self.params = CarControllerParams(CP)
     self.mdps_error_cnt = 0
+    self.gear_shifter = GearShifter.drive # Gear_init for Nexo ?? unknown 21.02.23.LSW
 
   def update(self, cp, cp_cam):
     if self.CP.carFingerprint in CANFD_CAR:

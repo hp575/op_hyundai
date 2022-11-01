@@ -524,6 +524,12 @@ CommunityPanel::CommunityPanel(SettingsWindow *parent) : ListWidget(parent) {
       tr("Haptic feedback when a speed camera is detected"),
       "../assets/offroad/icon_openpilot.png",
     },
+    {
+      "ShowDebugMessage",
+      tr("Show Debug Message"),
+      "",
+      "../assets/offroad/icon_shell.png",
+    },
   };
 
   for (auto &[param, title, desc, icon] : toggle_defs) {

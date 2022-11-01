@@ -2,6 +2,8 @@ from cereal import log
 from common.conversions import Conversions as CV
 from common.realtime import DT_MDL
 
+AutoLaneChangeEnabled = True
+
 LaneChangeState = log.LateralPlan.LaneChangeState
 LaneChangeDirection = log.LateralPlan.LaneChangeDirection
 
@@ -61,8 +63,9 @@ class DesireHelper:
           carstate.leftBlinker else LaneChangeDirection.right
 
         torque_applied = carstate.steeringPressed and \
-                         ((carstate.steeringTorque >= 0 and self.lane_change_direction == LaneChangeDirection.left) or
-                          (carstate.steeringTorque <= 0 and self.lane_change_direction == LaneChangeDirection.right))
+                         ((carstate.steeringTorque > 0 and self.lane_change_direction == LaneChangeDirection.left) or
+                          (carstate.steeringTorque < 0 and self.lane_change_direction == LaneChangeDirection.right)) or \
+                          AutoLaneChangeEnabled 
 
         blindspot_detected = ((carstate.leftBlindspot and self.lane_change_direction == LaneChangeDirection.left) or
                               (carstate.rightBlindspot and self.lane_change_direction == LaneChangeDirection.right))

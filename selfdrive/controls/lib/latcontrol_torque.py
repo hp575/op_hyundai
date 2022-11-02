@@ -18,7 +18,7 @@ from selfdrive.controls.ntune import nTune
 # friction in the steering wheel that needs to be overcome to
 # move it at all, this is compensated for too.
 
-LOW_SPEED_FACTOR = 200
+LOW_SPEED_FACTOR = 300
 
 
 class LatControlTorque(LatControl):

@@ -23,8 +23,9 @@ class CarState(CarStateBase):
     self.cruise_buttons = deque([Buttons.NONE] * PREV_BUTTON_SAMPLES, maxlen=PREV_BUTTON_SAMPLES)
     self.main_buttons = deque([Buttons.NONE] * PREV_BUTTON_SAMPLES, maxlen=PREV_BUTTON_SAMPLES)
 
+    self.gear_msg_canfd = "GEAR_ALT" if CP.flags & HyundaiFlags.CANFD_ALT_GEARS else "GEAR_SHIFTER"
     if CP.carFingerprint in CANFD_CAR:
-      self.shifter_values = can_define.dv["GEAR_SHIFTER"]["GEAR"]
+      self.shifter_values = can_define.dv[self.gear_msg_canfd]["GEAR"]
     elif self.CP.carFingerprint in FEATURES["use_cluster_gears"]:
       self.shifter_values = can_define.dv["CLU15"]["CF_Clu_Gear"]
     elif self.CP.carFingerprint in FEATURES["use_tcu_gears"]:
@@ -44,6 +45,7 @@ class CarState(CarStateBase):
 
     self.params = CarControllerParams(CP)
     self.mdps_error_cnt = 0
+    self.cruise_unavail_cnt = 0
     self.gear_shifter = GearShifter.drive # Gear_init for Nexo ?? unknown 21.02.23.LSW
 
   def update(self, cp, cp_cam):
@@ -174,6 +176,9 @@ class CarState(CarStateBase):
     # ------------------------------------------------------------------------
     # custom
 
+    self.cruise_unavail_cnt += 1 if cp.vl["TCS13"]["CF_VSM_Avail"] != 1 and cp.vl["TCS13"]["ACCEnable"] != 0 else -self.cruise_unavail_cnt
+    self.brake_error = self.cruise_unavail_cnt > 100
+    
     self.mdps12 = copy.copy(cp.vl["MDPS12"])
     self.scc11 = copy.copy(cp_cruise.vl["SCC11"])
     self.scc12 = copy.copy(cp_cruise.vl["SCC12"])
@@ -221,17 +226,21 @@ class CarState(CarStateBase):
   def update_canfd(self, cp, cp_cam):
     ret = car.CarState.new_message()
 
-    if self.CP.carFingerprint in EV_CAR:
-      ret.gas = cp.vl["ACCELERATOR"]["ACCELERATOR_PEDAL"] / 255.
-    elif self.CP.carFingerprint in HYBRID_CAR:
-      ret.gas = cp.vl["ACCELERATOR_ALT"]["ACCELERATOR_PEDAL"] / 1023.
-    ret.gasPressed = ret.gas > 1e-5
+    if self.CP.carFingerprint in (EV_CAR | HYBRID_CAR):
+      if self.CP.carFingerprint in EV_CAR:
+        ret.gas = cp.vl["ACCELERATOR"]["ACCELERATOR_PEDAL"] / 255.
+      else:
+        ret.gas = cp.vl["ACCELERATOR_ALT"]["ACCELERATOR_PEDAL"] / 1023.
+      ret.gasPressed = ret.gas > 1e-5
+    else:
+      ret.gasPressed = bool(cp.vl["ACCELERATOR_BRAKE_ALT"]["ACCELERATOR_PEDAL_PRESSED"])
+
     ret.brakePressed = cp.vl["TCS"]["DriverBraking"] == 1
 
     ret.doorOpen = cp.vl["DOORS_SEATBELTS"]["DRIVER_DOOR_OPEN"] == 1
     ret.seatbeltUnlatched = cp.vl["DOORS_SEATBELTS"]["DRIVER_SEATBELT_LATCHED"] == 0
 
-    gear = cp.vl["GEAR_SHIFTER"]["GEAR"]
+    gear = cp.vl[self.gear_msg_canfd]["GEAR"]
     ret.gearShifter = self.parse_gear_shifter(self.shifter_values.get(gear))
 
     # TODO: figure out positions
@@ -334,10 +343,14 @@ class CarState(CarStateBase):
 
       ("ACCEnable", "TCS13"),
       ("ACC_REQ", "TCS13"),
+      ("BrakeLight", "TCS13"),
+      ("aBasis", "TCS13"),
       ("DriverBraking", "TCS13"),
-      ("StandStill", "TCS13"),
-      ("PBRAKE_ACT", "TCS13"),
 
+      ("PBRAKE_ACT", "TCS13"),
+      ("DriverOverride", "TCS13"),
+      ("CF_VSM_Avail", "TCS13"),
+      
       ("ESC_Off_Step", "TCS15"),
       ("AVH_LAMP", "TCS15"),
 
@@ -362,7 +375,7 @@ class CarState(CarStateBase):
       ("PRESSURE_RL", "TPMS11"),
       ("PRESSURE_RR", "TPMS11"),
 
-      ("BrakeLight", "TCS13"),
+
     ]
     checks = [
       # address, frequency

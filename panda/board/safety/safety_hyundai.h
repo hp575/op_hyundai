@@ -104,10 +104,7 @@ AddrCheckStruct hyundai_legacy_addr_checks[] = {
 };
 #define HYUNDAI_LEGACY_ADDR_CHECK_LEN (sizeof(hyundai_legacy_addr_checks) / sizeof(hyundai_legacy_addr_checks[0]))
 
-const int HYUNDAI_PARAM_CAMERA_SCC = 8;
-
 bool hyundai_legacy = false;
-bool hyundai_camera_scc = false;
 
 addr_checks hyundai_rx_checks = {hyundai_addr_checks, HYUNDAI_ADDR_CHECK_LEN};
 
@@ -257,9 +254,9 @@ static int hyundai_rx_hook(CANPacket_t *to_push) {
   return valid;
 }
 
-uint32_t last_ts_lkas11_received_from_op = 0;
-uint32_t last_ts_scc12_received_from_op = 0;
-uint32_t last_ts_mdps12_received_from_op = 0;
+uint32_t last_ts_lkas11_from_op = 0;
+uint32_t last_ts_scc12_from_op = 0;
+uint32_t last_ts_mdps12_from_op = 0;
 
 static int hyundai_tx_hook(CANPacket_t *to_send, bool longitudinal_allowed) {
 
@@ -347,11 +344,11 @@ static int hyundai_tx_hook(CANPacket_t *to_send, bool longitudinal_allowed) {
     bool is_mdps12_msg = addr == 593;
 
     if(is_lkas11_msg)
-      last_ts_lkas11_received_from_op = microsecond_timer_get();
+      last_ts_lkas11_from_op = microsecond_timer_get();
     else if(is_scc12_msg)
-      last_ts_scc12_received_from_op = microsecond_timer_get();
+      last_ts_scc12_from_op = microsecond_timer_get();
     else if(is_mdps12_msg)
-      last_ts_mdps12_received_from_op = microsecond_timer_get();
+      last_ts_mdps12_from_op = microsecond_timer_get();
   }
 
   return tx;
@@ -369,7 +366,7 @@ static int hyundai_fwd_hook(int bus_num, CANPacket_t *to_fwd) {
     bus_fwd = 2;
 
     if(addr == 593) {
-      if(now - last_ts_mdps12_received_from_op < 200000) {
+      if(now - last_ts_mdps12_from_op < 200000) {
         bus_fwd = -1;
       }
     }
@@ -387,12 +384,12 @@ static int hyundai_fwd_hook(int bus_num, CANPacket_t *to_fwd) {
     }
     else {
       if(is_lkas_msg || is_lfahda_msg) {
-        if(now - last_ts_lkas11_received_from_op >= 200000) {
+        if(now - last_ts_lkas11_from_op >= 200000) {
           bus_fwd = 0;
         }
       }
       else if(is_scc_msg) {
-        if(now - last_ts_scc12_received_from_op >= 400000)
+        if(now - last_ts_scc12_from_op >= 400000)
           bus_fwd = 0;
       }
     }
@@ -404,7 +401,6 @@ static int hyundai_fwd_hook(int bus_num, CANPacket_t *to_fwd) {
 static const addr_checks* hyundai_init(uint16_t param) {
   hyundai_common_init(param);
   hyundai_legacy = false;
-  hyundai_camera_scc = GET_FLAG(param, HYUNDAI_PARAM_CAMERA_SCC);
 
   if (hyundai_camera_scc) {
     hyundai_longitudinal = false;

@@ -595,6 +595,7 @@ class Controls:
 
     if ntune_common_enabled('useLiveSteerRatio'):
       sr = max(lp.steerRatio, 0.1)
+      sr = sr - (sr * 0.14) # steerRatioScale value update by forNEXO ver - lsw 22.10.19
     else:
       sr = max(ntune_common_get('steerRatio'), 0.1)
 

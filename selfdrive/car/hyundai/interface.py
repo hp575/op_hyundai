@@ -11,6 +11,7 @@ from selfdrive.car.interfaces import CarInterfaceBase
 from selfdrive.car.disable_ecu import disable_ecu
 from selfdrive.controls.neokii.cruise_state_manager import is_radar_disabler
 from common.params import Params
+from selfdrive.car.hyundai.cruise_helper import enable_radar_tracks
 
 Ecu = car.CarParams.Ecu
 ButtonType = car.CarState.ButtonEvent.Type
@@ -333,6 +334,7 @@ class CarInterface(CarInterfaceBase):
       if CP.flags & HyundaiFlags.CANFD_HDA2.value:
         addr, bus = 0x730, 5
       disable_ecu(logcan, sendcan, bus=bus, addr=addr, com_cont_req=b'\x28\x83\x01')
+      enable_radar_tracks(CP, logcan, sendcan) # Thank you to ajouatom 
 
   def _update(self, c):
     ret = self.CS.update(self.cp, self.cp_cam)

@@ -334,7 +334,7 @@ class CarInterface(CarInterfaceBase):
       if CP.flags & HyundaiFlags.CANFD_HDA2.value:
         addr, bus = 0x730, 5
       disable_ecu(logcan, sendcan, bus=bus, addr=addr, com_cont_req=b'\x28\x83\x01')
-      enable_radar_tracks(CP, logcan, sendcan) # Thank you to ajouatom 
+      #enable_radar_tracks(CP, logcan, sendcan) # Thank you to ajouatom 
 
   def _update(self, c):
     ret = self.CS.update(self.cp, self.cp_cam)

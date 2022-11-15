@@ -4,7 +4,7 @@ from common.numpy_fast import clip
 from selfdrive.car import create_button_event
 from common.conversions import Conversions as CV
 from common.params import Params
-from selfdrive.car.hyundai.values import CANFD_CAR ,EV_CAR
+from selfdrive.car.hyundai.values import CANFD_CAR
 from selfdrive.controls.lib.drive_helpers import V_CRUISE_MAX, V_CRUISE_ENABLE_MIN
 
 V_CRUISE_MIN_CRUISE_STATE = 10
@@ -14,7 +14,7 @@ V_CRUISE_DELTA_KM = 10
 ButtonType = car.CarState.ButtonEvent.Type
 
 def is_radar_disabler(CP):
-  return CP.carFingerprint in CANFD_CAR or CP.carFingerprint in EV_CAR or (CP.openpilotLongitudinalControl and CP.sccBus == 0)
+  return CP.carFingerprint in CANFD_CAR or (CP.openpilotLongitudinalControl and CP.sccBus == 0)
 
 
 class CruiseStateManager:

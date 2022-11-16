@@ -10,19 +10,23 @@ from selfdrive.car.hyundai.values import CAR
 from selfdrive.car.isotp_parallel_query import IsoTpParallelQuery
       
 # ajouatom
-def enable_radar_tracks(CP, logcan, sendcan):
-  # START: Try to enable radar tracks
+def enable_radar_tracks___bakup(CP, logcan, sendcan):
+      # START: Try to enable radar tracks
   print("Try to enable radar tracks")  
   # if self.CP.openpilotLongitudinalControl and self.CP.carFingerprint in [HYUNDAI_CAR.SANTA_FE_2022]:
-  if CP.openpilotLongitudinalControl and CP.carFingerprint == CAR.NEXO:
+  if CP.openpilotLongitudinalControl and CP.carFingerprint in [CAR.SANTA_FE_HEV_2022, CAR.NEXO]:
     rdr_fw = None
     for fw in CP.carFw:
       if fw.ecu == "fwdRadar":
         rdr_fw = fw
         break
     print(f"Found fwdRadar: {rdr_fw.fwVersion}")
-    if rdr_fw.fwVersion in [b'\xf1\x00FE__ SCC FHCUP      1.00 1.03 99110-M5000         ' #NEXO1 
-    b'\xf1\x00FE__ SCC FHCUP      1.00 1.04 99110-M5000         ' #NEXO2
+    if rdr_fw.fwVersion in [b'\xf1\x8799110S1500\xf1\x00TM__ SCC FHCUP      1.00 1.00 99110-S1500         ',
+      b'TM__ SCC FHCUP      1.00 1.00 99110-S1500 \x04!\x15\x07    ',
+      b'TMhe SCC FHCUP      1.00 1.00 99110-CL500 \x04$\x164    ', 
+      b'\xf1\x00TMhe SCC FHCUP      1.00 1.00 99110-CL500         ', # SANTAFE_HEV
+      b'\xf1\x00FE__ SCC FHCUP      1.00 1.03 99110-M5000         ', #NEXO
+      b'\xf1\x00FE__ SCC FHCUP      1.00 1.04 99110-M5000         ' #NEXO2
       ]:
       for i in range(10):
         print("O yes")

@@ -958,6 +958,7 @@ FW_VERSIONS = {
     ],
     (Ecu.fwdRadar, 0x7d0, None): [
       b'\xf1\x00FE__ SCC FHCUP      1.00 1.03 99110-M5000         ',
+      b'\xf1\x00FE__ SCC FHCUP      1.00 1.04 99110-M5000         ',
     ],
     (Ecu.abs, 0x7c1, None): [
       b'\xf1\x00FE IEB \x01 312 \x11\x13 58520-M5000',

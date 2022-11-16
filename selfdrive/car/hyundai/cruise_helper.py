@@ -10,7 +10,7 @@ from selfdrive.car.hyundai.values import CAR
 from selfdrive.car.isotp_parallel_query import IsoTpParallelQuery
       
 # ajouatom
-def enable_radar_tracks___bakup(CP, logcan, sendcan):
+def enable_radar_tracks(CP, logcan, sendcan):
       # START: Try to enable radar tracks
   print("Try to enable radar tracks")  
   # if self.CP.openpilotLongitudinalControl and self.CP.carFingerprint in [HYUNDAI_CAR.SANTA_FE_2022]:

@@ -261,8 +261,8 @@ class CarInterfaceBase(ABC):
       if not self.CP.pcmCruise and (b.type in enable_buttons and not b.pressed):
         events.add(EventName.buttonEnable)
       # Disable on rising edge of cancel for both stock and OP long
-      #if b.type == ButtonType.cancel and b.pressed:
-      #  events.add(EventName.buttonCancel)
+      if b.type == ButtonType.cancel and b.pressed:
+        events.add(EventName.buttonCancel)
 
     # Handle permanent and temporary steering faults
     self.steering_unpressed = 0 if cs_out.steeringPressed else self.steering_unpressed + 1

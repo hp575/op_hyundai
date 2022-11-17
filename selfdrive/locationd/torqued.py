@@ -17,9 +17,9 @@ from selfdrive.controls.lib.vehicle_model import ACCELERATION_DUE_TO_GRAVITY
 HISTORY = 5  # secs
 POINTS_PER_BUCKET = 1500
 MIN_POINTS_TOTAL = 4000
-MIN_POINTS_TOTAL_QLOG = 800
+MIN_POINTS_TOTAL_QLOG = 600
 FIT_POINTS_TOTAL = 2000
-FIT_POINTS_TOTAL_QLOG = 800
+FIT_POINTS_TOTAL_QLOG = 600
 MIN_VEL = 15  # m/s
 FRICTION_FACTOR = 1.5  # ~85% of data coverage
 FACTOR_SANITY = 0.3
@@ -103,7 +103,7 @@ class TorqueEstimator:
 
   def __init__(self, CP, decimated=False):
     self.hist_len = int(HISTORY / DT_MDL)
-    self.lag = ntune_common_get('steerActuatorDelay') + .2 # from controlsd
+    self.lag = ntune_common_get('steerActuatorDelay') + .2   # from controlsd
     if decimated:
       self.min_bucket_points = MIN_BUCKET_POINTS / 10
       self.min_points_total = MIN_POINTS_TOTAL_QLOG

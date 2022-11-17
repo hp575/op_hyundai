@@ -261,7 +261,7 @@ class CarInterfaceBase(ABC):
       if not self.CP.pcmCruise and (b.type in enable_buttons and not b.pressed):
         events.add(EventName.buttonEnable) 
         print("enable_buttons_chk")
-      # Disable on rising edge of cancel for both stock and OP long
+      # Disable on rising and falling edge of cancel for both stock and OP long
       if b.type == ButtonType.cancel and b.pressed:
         events.add(EventName.buttonCancel)
         print("buttonCancel_chk")

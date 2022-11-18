@@ -150,11 +150,11 @@ def create_acc_commands(packer, enabled, accel, upper_jerk, idx, lead_visible, s
 
   return commands
 
-def create_acc_opt(CP, packer):
+def create_acc_opt(packer):
   commands = []
 
   scc13_values = {
-    "SCCDrvModeRValue": 3 if CP.carFingerprint in (CAR.NEXO) else 2,  #KONA_EV는 3이네?, # Thank you to ajouatom(섭섭이네)
+    "SCCDrvModeRValue": 3 ,  #KONA_EV는 3이네?, # Thank you to ajouatom(섭섭이네)
     "SCC_Equip": 1,
     "Lead_Veh_Dep_Alert_USM": 2,
   }

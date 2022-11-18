@@ -154,7 +154,7 @@ def create_acc_opt(packer):
   commands = []
 
   scc13_values = {
-    "SCCDrvModeRValue": 3 ,  #KONA_EV는 3이네?, # Thank you to ajouatom(섭섭이네)
+    "SCCDrvModeRValue": 2 ,
     "SCC_Equip": 1,
     "Lead_Veh_Dep_Alert_USM": 2,
   }
@@ -162,7 +162,7 @@ def create_acc_opt(packer):
 
   fca12_values = {
     "FCA_DrvSetState": 2,
-    "FCA_USM": 1, # AEB disabled
+    "FCA_USM": 0, # AEB disabled
   }
   commands.append(packer.make_can_msg("FCA12", 0, fca12_values))
 

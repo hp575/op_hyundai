@@ -152,16 +152,12 @@ def create_acc_commands(packer, enabled, accel, upper_jerk, idx, lead_visible, s
 
 def create_acc_opt(CP, CS, packer):
   commands = []
-  if False: #CP.sccBus == 2 or CS.scc13 is not None:
-    values = CS.scc13
-    commands.append(packer.make_can_msg("SCC13", 0, values))
-  else:
-    scc13_values = {
-      "SCCDrvModeRValue": 3 if CP.carFingerprint in (CAR.NEXO) else 2,  #KONA_EV는 3이네?, # Thank you to ajouatom(섭섭이네)
-      "SCC_Equip": 1,
-      "Lead_Veh_Dep_Alert_USM": 2,
+   scc13_values = {
+    "SCCDrvModeRValue": 3 if CP.carFingerprint in (CAR.NEXO) else 2,  #KONA_EV는 3이네?, # Thank you to ajouatom(섭섭이네)
+    "SCC_Equip": 1,
+    "Lead_Veh_Dep_Alert_USM": 2,
     }
-    commands.append(packer.make_can_msg("SCC13", 0, scc13_values))
+   commands.append(packer.make_can_msg("SCC13", 0, scc13_values))
 
   if CP.sccBus == 0:
     fca12_values = {

@@ -262,7 +262,7 @@ class CarInterfaceBase(ABC):
         events.add(EventName.buttonEnable) 
         print("enable_buttons_chk")
       # Disable on rising and falling edge of cancel for both stock and OP long
-      if b.type == ButtonType.cancel and b.pressed:
+      if b.type == ButtonType.cancel :
         events.add(EventName.buttonCancel)
         print("buttonCancel_chk")
 

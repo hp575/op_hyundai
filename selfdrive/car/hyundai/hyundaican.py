@@ -140,8 +140,8 @@ def create_acc_commands(packer, enabled, accel, upper_jerk, idx, lead_visible, s
   # https://github.com/commaai/opendbc/commit/9ddcdb22c4929baf310295e832668e6e7fcfa602
   fca11_values = {
     "CR_FCA_Alive": idx % 0xF,
-    "PAINT1_Status": 1,
-    "FCA_DrvSetStatus": 1,
+    "PAINT1_Status": 0,
+    "FCA_DrvSetStatus": 0,
     "FCA_Status": 0,  # AEB disabled
   }
   fca11_dat = packer.make_can_msg("FCA11", 0, fca11_values)[2]

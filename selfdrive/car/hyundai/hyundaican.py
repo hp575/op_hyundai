@@ -162,7 +162,7 @@ def create_acc_opt(packer):
 
   fca12_values = {
     "FCA_DrvSetState": 2,
-    "FCA_USM": 0, # AEB disabled
+    "FCA_USM": 1, # AEB disabled
   }
   commands.append(packer.make_can_msg("FCA12", 0, fca12_values))
 

@@ -304,11 +304,8 @@ class CarInterface(CarInterfaceBase):
 
     if ret.openpilotLongitudinalControl and ret.sccBus == 0 and Params().get_bool('CruiseStateControl'):
       ret.pcmCruise = False # pcmCruise 가 false 여야 롱컨이됨..??
-      print('pcmCruise 가 false 여야 롱컨이됨..??')
     else:
       ret.pcmCruise = True # managed by cruise state manager
-      print('pcmCruise 가 true 이네...')
-    print('debug_long  = {},{},{},{}'.format(ret.openpilotLongitudinalControl, ret.sccBus, Params().get_bool('CruiseStateControl'),ret.pcmCruise))
     if ret.openpilotLongitudinalControl:
       ret.safetyConfigs[-1].safetyParam |= Panda.FLAG_HYUNDAI_LONG
     if candidate in HYBRID_CAR:

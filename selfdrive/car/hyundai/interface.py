@@ -295,7 +295,7 @@ class CarInterface(CarInterfaceBase):
       if not ret.openpilotLongitudinalControl:
         ret.radarOffCan = ret.sccBus == -1
 
-      if ret.sccBus == 2:
+      if ret.sccBus == 2 or ret.sccBus == 0:
         ret.hasScc13 = 1290 in fingerprint[0] or 1290 in fingerprint[2]
         ret.hasScc14 = 905 in fingerprint[0] or 905 in fingerprint[2]
         ret.openpilotLongitudinalControl = True
@@ -308,6 +308,7 @@ class CarInterface(CarInterfaceBase):
     else:
       ret.pcmCruise = True # managed by cruise state manager
       print('pcmCruise 가 true 이네...')
+    ret.pcmCruise = False # pcmCruise 가 false 여야 롱컨이됨..??
     print('debug_long  = {},{},{},{}'.format(ret.openpilotLongitudinalControl, ret.sccBus, Params().get_bool('CruiseStateControl'),ret.pcmCruise))
     if ret.openpilotLongitudinalControl:
       ret.safetyConfigs[-1].safetyParam |= Panda.FLAG_HYUNDAI_LONG

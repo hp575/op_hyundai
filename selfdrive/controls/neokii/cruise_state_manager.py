@@ -132,13 +132,12 @@ class CruiseStateManager:
     return btn
 
   def update_cruise_state(self, CS, v_cruise_kph, btn):
-    print('btn_pressed  = {}'.format(btn))
     if self.enabled:
       if not self.btn_long_pressed:
         if btn == ButtonType.accelCruise:
-          v_cruise_kph += 1 if self.is_metric else 1 * CV.MPH_TO_KPH
+          v_cruise_kph += 1 if self.is_metric else 1 * CV.KPH_TO_MS
         elif btn == ButtonType.decelCruise:
-          v_cruise_kph -= 1 if self.is_metric else 1 * CV.MPH_TO_KPH
+          v_cruise_kph -= 1 if self.is_metric else 1 * CV.KPH_TO_MS
       else:
         v_cruise_delta = V_CRUISE_DELTA_KM if self.is_metric else V_CRUISE_DELTA_MI
         if btn == ButtonType.accelCruise:
@@ -150,7 +149,6 @@ class CruiseStateManager:
       if not self.btn_long_pressed:
         if btn == ButtonType.decelCruise and not self.enabled:
           self.enabled = True
-          print('btn_long_pressed  = {},{}'.format(self.enabled,btn))
           v_cruise_kph = CS.vEgoCluster * CV.MS_TO_KPH
           if CS.vEgoCluster < 0.1:
             v_cruise_kph = clip(round(v_cruise_kph, 1), V_CRUISE_ENABLE_MIN, V_CRUISE_MAX)

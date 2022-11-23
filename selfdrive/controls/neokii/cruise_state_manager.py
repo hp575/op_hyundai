@@ -132,7 +132,7 @@ class CruiseStateManager:
     return btn
 
   def update_cruise_state(self, CS, v_cruise_kph, btn):
-
+    print('btn_pressed  = {}'.format(btn))
     if self.enabled:
       if not self.btn_long_pressed:
         if btn == ButtonType.accelCruise:
@@ -167,6 +167,6 @@ class CruiseStateManager:
 
     if btn == ButtonType.cancel:
       self.enabled = False
-    print('btn_pressed  = {}'.format(btn))
+      
     v_cruise_kph = clip(round(v_cruise_kph, 1), V_CRUISE_MIN_CRUISE_STATE, V_CRUISE_MAX)
     self.speed = v_cruise_kph * CV.KPH_TO_MS

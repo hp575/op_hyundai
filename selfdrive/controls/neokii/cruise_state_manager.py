@@ -150,6 +150,7 @@ class CruiseStateManager:
       if not self.btn_long_pressed:
         if btn == ButtonType.decelCruise and not self.enabled:
           self.enabled = True
+          print('btn_long_pressed  = {},{}'.format(self.enabled,btn))
           v_cruise_kph = CS.vEgoCluster * CV.MS_TO_KPH
           if CS.vEgoCluster < 0.1:
             v_cruise_kph = clip(round(v_cruise_kph, 1), V_CRUISE_ENABLE_MIN, V_CRUISE_MAX)
@@ -166,6 +167,6 @@ class CruiseStateManager:
 
     if btn == ButtonType.cancel:
       self.enabled = False
-
+    print('btn_pressed  = {}'.format(btn))
     v_cruise_kph = clip(round(v_cruise_kph, 1), V_CRUISE_MIN_CRUISE_STATE, V_CRUISE_MAX)
     self.speed = v_cruise_kph * CV.KPH_TO_MS

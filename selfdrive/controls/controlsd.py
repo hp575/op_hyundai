@@ -15,7 +15,7 @@ from selfdrive.controls.neokii.cruise_state_manager import CruiseStateManager
 from selfdrive.controls.ntune import ntune_common_enabled, ntune_common_get
 from selfdrive.controls.neokii.speed_controller import SpeedController
 from system.swaglog import cloudlog
-from system.version import is_tested_branch, get_short_branch
+from system.version import is_release_branch, get_short_branch
 from selfdrive.boardd.boardd import can_list_to_can_capnp
 from selfdrive.car.car_helpers import get_car, get_startup_event, get_one_can
 from selfdrive.controls.lib.lateral_planner import CAMERA_OFFSET
@@ -135,7 +135,7 @@ class Controls:
       safety_config.safetyModel = car.CarParams.SafetyModel.noOutput
       self.CP.safetyConfigs = [safety_config]
 
-    if is_tested_branch():
+    if is_release_branch():
       self.CP.experimentalLongitudinalAvailable = False
 
     # Write CarParams for radard
@@ -280,7 +280,7 @@ class Controls:
     #  self.events.add(EventName.highCpuUsage)
 
     # Alert if fan isn't spinning for 5 seconds
-    if self.sm['peripheralState'].pandaType == PandaType.dos:
+    if self.sm['peripheralState'].pandaType != log.PandaState.PandaType.unknown:
       if self.sm['peripheralState'].fanSpeedRpm == 0 and self.sm['deviceState'].fanSpeedPercentDesired > 50:
         if (self.sm.frame - self.last_functional_fan_frame) * DT_CTRL > 5.0:
           self.events.add(EventName.fanMalfunction)
@@ -316,12 +316,10 @@ class Controls:
         safety_mismatch = pandaState.safetyModel != self.CP.safetyConfigs[i].safetyModel or \
                           pandaState.safetyParam != self.CP.safetyConfigs[i].safetyParam or \
                           pandaState.alternativeExperience != self.CP.alternativeExperience
-        #print('true safety_mismatch = {},{},{},{},{},{}'.format(pandaState.safetyModel, self.CP.safetyConfigs[i].safetyModel, pandaState.safetyParam, self.CP.safetyConfigs[i].safetyParam, pandaState.alternativeExperience, self.CP.alternativeExperience)) 
       else:
         safety_mismatch = pandaState.safetyModel not in IGNORED_SAFETY_MODES
 
       if safety_mismatch or pandaState.safetyRxChecksInvalid or self.mismatch_counter >= 200:
-       # print('mismatch = {},{},{}'.format(safety_mismatch, pandaState.safetyRxChecksInvalid, self.mismatch_counter))
         self.events.add(EventName.controlsMismatch)
 
       if log.PandaState.FaultType.relayMalfunction in pandaState.faults:
@@ -652,7 +650,7 @@ class Controls:
 
     # Send a "steering required alert" if saturation count has reached the limit
     if lac_log.active and not CS.steeringPressed and self.CP.lateralTuning.which() == 'torque' and not self.joystick_mode:
-      undershooting = abs(lac_log.desiredLateralAccel) / abs(1e-3 + lac_log.actualLateralAccel) > 2.5
+      undershooting = abs(lac_log.desiredLateralAccel) / abs(1e-3 + lac_log.actualLateralAccel) > 2.0
       turning = abs(lac_log.desiredLateralAccel) > 1.0
       good_speed = CS.vEgo > 5
       max_torque = abs(self.last_actuators.steer) > 0.99

@@ -123,7 +123,7 @@ def create_acc_commands(packer, enabled, accel, upper_jerk, idx, lead_visible, s
   }
   scc12_dat = packer.make_can_msg("SCC12", 0, scc12_values)[2]
   scc12_values["CR_VSM_ChkSum"] = 0x10 - sum(sum(divmod(i, 16)) for i in scc12_dat) % 0x10
-
+  print('동작함..???  scc12_values = ',scc12_values)
   commands.append(packer.make_can_msg("SCC12", 0, scc12_values))
 
   scc14_values = {

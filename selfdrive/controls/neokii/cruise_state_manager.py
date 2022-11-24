@@ -62,7 +62,7 @@ class CruiseStateManager:
 
   # CS - CarState cereal message
   def update(self, CS, main_buttons, cruise_buttons, buttons_dict, available=-1, cruise_state_control=True):
-
+    print('update_msg!!!!  = {},{},{},{},{},{},{}'.format(self,CS,main_buttons,cruise_buttons,buttons_dict,available,cruise_state_control))
     if available >= 0:
       self.available = available
     elif main_buttons[-1] != self.prev_main_buttons and main_buttons[-1]:
@@ -114,8 +114,6 @@ class CruiseStateManager:
           or b.type == ButtonType.decelCruise
           or b.type == ButtonType.gapAdjustCruise
           or b.type == ButtonType.cancel
-          or b.type == ButtonType.cruise_buttons # Test - 과연..???
-          or b.type == ButtonType.main_buttons # Test - 과연..???
       ):
         self.btn_count = 1
         self.prev_btn = b.type
@@ -134,7 +132,6 @@ class CruiseStateManager:
     return btn
 
   def update_cruise_state(self, CS, v_cruise_kph, btn):
-    print('btn_pressed  = {}'.format(btn)) # 어떤 버튼을 눌렀지 확인좀...
     if self.enabled:
       if not self.btn_long_pressed:
         if btn == ButtonType.accelCruise:

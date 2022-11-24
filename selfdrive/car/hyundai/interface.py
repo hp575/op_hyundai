@@ -295,17 +295,19 @@ class CarInterface(CarInterfaceBase):
       if not ret.openpilotLongitudinalControl:
         ret.radarOffCan = ret.sccBus == -1
 
-      if ret.sccBus == 2 :
+      if ret.sccBus == 2 or ret.sccBus == 0 :
         ret.hasScc13 = 1290 in fingerprint[0] or 1290 in fingerprint[2]
         ret.hasScc14 = 905 in fingerprint[0] or 905 in fingerprint[2]
         ret.openpilotLongitudinalControl = True
         ret.radarOffCan = False
-        ret.safetyConfigs = [get_safety_config(car.CarParams.SafetyModel.hyundaiLegacy)]
+        #ret.safetyConfigs = [get_safety_config(car.CarParams.SafetyModel.hyundaiLegacy)]
 
     if ret.openpilotLongitudinalControl and ret.sccBus == 0 and Params().get_bool('CruiseStateControl'):
       ret.pcmCruise = False # pcmCruise 가 false 여야 롱컨이됨..??
     else:
       ret.pcmCruise = True # managed by cruise state manager
+      
+    ret.pcmCruise = False # 위 결과와 상관 없이. 무조건 False!! -> 혹시나 이상하면 다시 주석처리 함.
     
     if ret.openpilotLongitudinalControl:
       ret.safetyConfigs[-1].safetyParam |= Panda.FLAG_HYUNDAI_LONG

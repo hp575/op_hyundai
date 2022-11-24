@@ -106,7 +106,7 @@ class CruiseStateManager:
 
     if self.btn_count > 0:
       self.btn_count += 1
-
+    # allow_enable = any(btn in ENABLE_BUTTONS for btn in self.CS.cruise_buttons) or any(self.CS.main_buttons)
     for b in self.button_events:
       if b.pressed and self.btn_count == 0 \
           and (
@@ -114,6 +114,8 @@ class CruiseStateManager:
           or b.type == ButtonType.decelCruise
           or b.type == ButtonType.gapAdjustCruise
           or b.type == ButtonType.cancel
+          or b.type == ButtonType.cruise_buttons # Test - 과연..???
+          or b.type == ButtonType.main_buttons # Test - 과연..???
       ):
         self.btn_count = 1
         self.prev_btn = b.type
@@ -132,12 +134,13 @@ class CruiseStateManager:
     return btn
 
   def update_cruise_state(self, CS, v_cruise_kph, btn):
+    print('btn_pressed  = {}'.format(btn)) # 어떤 버튼을 눌렀지 확인좀...
     if self.enabled:
       if not self.btn_long_pressed:
         if btn == ButtonType.accelCruise:
-          v_cruise_kph += 1 if self.is_metric else 1 * CV.KPH_TO_MS
+          v_cruise_kph += 1 if self.is_metric else 1 * CV.MPH_TO_KPH
         elif btn == ButtonType.decelCruise:
-          v_cruise_kph -= 1 if self.is_metric else 1 * CV.KPH_TO_MS
+          v_cruise_kph -= 1 if self.is_metric else 1 * CV.MPH_TO_KPH
       else:
         v_cruise_delta = V_CRUISE_DELTA_KM if self.is_metric else V_CRUISE_DELTA_MI
         if btn == ButtonType.accelCruise:
@@ -166,5 +169,7 @@ class CruiseStateManager:
     if btn == ButtonType.cancel:
       self.enabled = False
       
+    #if btn == ButtonType.cruise_buttons:
+      #self.enabled = True   
     v_cruise_kph = clip(round(v_cruise_kph, 1), V_CRUISE_MIN_CRUISE_STATE, V_CRUISE_MAX)
     self.speed = v_cruise_kph * CV.KPH_TO_MS

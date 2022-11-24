@@ -48,7 +48,7 @@ def create_acc_commands(packer, enabled, accel, upper_jerk, idx, lead_visible,
   values["CR_VSM_ChkSum"] = 0
   scc12_dat = packer.make_can_msg("SCC12", 0, values)[2]
   values["CR_VSM_ChkSum"] = 0x10 - sum(sum(divmod(i, 16)) for i in scc12_dat) % 0x10
-
+  print('동작함..???  ACCMode = ',values["ACCMode"])
   commands.append(packer.make_can_msg("SCC12", 0, values))
 
   if CS.scc14 is not None:

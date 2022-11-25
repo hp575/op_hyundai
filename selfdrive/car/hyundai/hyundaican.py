@@ -100,9 +100,9 @@ def create_acc_commands(packer, enabled, accel, upper_jerk, idx, lead_visible, s
   commands = []
   print('동작함 1..??? create_acc_commands = {},{},{},{},{},{}'.format(enabled,set_speed,lead_visible,long_override,stopping,accel))
   cruise_enabled = enabled and CS.out.cruiseState.enabled
-  CS.out.cruiseState.available = False # 함테스트 해보자... 어찌댈련지..
+  #CS.out.cruiseState.available = False # 함테스트 해보자... 어찌댈련지..
   scc11_values = {
-    "MainMode_ACC": CS.out.cruiseState.available,
+    "MainMode_ACC": False, #CS.out.cruiseState.available,
     "TauGapSet": CS.out.cruiseState.gapAdjust,
     "VSetDis": set_speed if cruise_enabled else 0,
     "AliveCounterACC": idx % 0x10,

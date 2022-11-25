@@ -98,11 +98,11 @@ def create_lfahda_mfc(packer, enabled, hda_set_speed=0):
 
 def create_acc_commands(packer, enabled, accel, upper_jerk, idx, lead_visible, set_speed, stopping, long_override, CS):
   commands = []
-  print('동작함 1..??? create_acc_commands = {},{},{},{},{},{}'.format(enabled,set_speed,lead_visible,long_override,stopping,accel))
+  #print('동작함 1..??? create_acc_commands = {},{},{},{},{},{}'.format(enabled,set_speed,lead_visible,long_override,stopping,accel))
   cruise_enabled = enabled and CS.out.cruiseState.enabled
-  #CS.out.cruiseState.available = False # 함테스트 해보자... 어찌댈련지..
+  
   scc11_values = {
-    "MainMode_ACC": False, #CS.out.cruiseState.available,
+    "MainMode_ACC": CS.out.cruiseState.available,
     "TauGapSet": CS.out.cruiseState.gapAdjust,
     "VSetDis": set_speed if cruise_enabled else 0,
     "AliveCounterACC": idx % 0x10,
@@ -112,7 +112,7 @@ def create_acc_commands(packer, enabled, accel, upper_jerk, idx, lead_visible, s
     "ACC_ObjRelSpd": 0,
     "ACC_ObjDist": 1, # close lead makes controls tighter # 선행 차량의 위치?? 1이니깐 차에서 1칸에 뜨는건가? 그럼 2면 두번쨰 칸에..?????
     }
-  print('동작함 2..???  scc11_values = {}'.format(scc11_values))
+  #print('동작함 2..???  scc11_values = {}'.format(scc11_values))
   commands.append(packer.make_can_msg("SCC11", 0, scc11_values))
 
   scc12_values = {
@@ -125,7 +125,7 @@ def create_acc_commands(packer, enabled, accel, upper_jerk, idx, lead_visible, s
   scc12_dat = packer.make_can_msg("SCC12", 0, scc12_values)[2]
   scc12_values["CR_VSM_ChkSum"] = 0x10 - sum(sum(divmod(i, 16)) for i in scc12_dat) % 0x10
   
-  print('동작함 3..???  scc12_values = {}'.format(scc12_values))
+  #print('동작함 3..???  scc12_values = {}'.format(scc12_values))
   commands.append(packer.make_can_msg("SCC12", 0, scc12_values))
 
   scc14_values = {
@@ -137,7 +137,7 @@ def create_acc_commands(packer, enabled, accel, upper_jerk, idx, lead_visible, s
     "ObjGap": 2 if lead_visible else 0, # 5: >30, m, 4: 25-30 m, 3: 20-25 m, 2: < 20 m, 0: no lead
   }
   
-  print('동작함 4..???  scc14_values = {}'.format(scc14_values))
+  #print('동작함 4..???  scc14_values = {}'.format(scc14_values))
   commands.append(packer.make_can_msg("SCC14", 0, scc14_values))
 
   # note that some vehicles most likely have an alternate checksum/counter definition
@@ -151,7 +151,7 @@ def create_acc_commands(packer, enabled, accel, upper_jerk, idx, lead_visible, s
   fca11_dat = packer.make_can_msg("FCA11", 0, fca11_values)[2]
   fca11_values["CR_FCA_ChkSum"] = hyundai_checksum(fca11_dat[:7])
   commands.append(packer.make_can_msg("FCA11", 0, fca11_values))
-  print('동작함 5..???  scc14_values = {}'.format(fca11_values))
+  #print('동작함 5..???  scc14_values = {}'.format(fca11_values))
   return commands
 
 def create_acc_opt(packer):
@@ -162,7 +162,7 @@ def create_acc_opt(packer):
     "SCC_Equip": 1,
     "Lead_Veh_Dep_Alert_USM": 2,
   }
-  print('동작함 6..???  create_acc_opt = {}'.format(scc13_values))
+  #print('동작함 6..???  create_acc_opt = {}'.format(scc13_values))
   commands.append(packer.make_can_msg("SCC13", 0, scc13_values))
 
   fca12_values = {

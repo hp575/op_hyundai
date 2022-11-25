@@ -62,7 +62,7 @@ class CruiseStateManager:
 
   # CS - CarState cereal message
   def update(self, CS, main_buttons, cruise_buttons, buttons_dict, available=-1, cruise_state_control=True):
-    print('update_msg!!!!  = {},{},{},{},{},{},{}'.format(main_buttons,cruise_buttons,buttons_dict,available,cruise_state_control))
+    print('update_msg!!!!  = {},{},{},{},{}'.format(main_buttons,cruise_buttons,buttons_dict,available,cruise_state_control))
     if available >= 0:
       self.available = available
     elif main_buttons[-1] != self.prev_main_buttons and main_buttons[-1]:

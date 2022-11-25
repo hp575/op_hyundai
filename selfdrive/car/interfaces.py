@@ -284,9 +284,11 @@ class CarInterfaceBase(ABC):
       if cs_out.cruiseState.available and not self.CS.out.cruiseState.available and allow_enable:
         if pcm_enable :
           events.add(EventName.pcmEnable)
+        print('인게이지 됨...???')
       elif not cs_out.cruiseState.available:
         if pcm_enable :
           events.add(EventName.pcmDisable)
+        print('디스인게이지 됨...???')
       else:
         if cs_out.cruiseState.enabled and not self.CS.out.cruiseState.enabled:
           if pcm_enable :

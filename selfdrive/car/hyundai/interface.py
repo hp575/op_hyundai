@@ -232,7 +232,15 @@ class CarInterface(CarInterfaceBase):
       ret.steerRatio = 12.069
     else:
       tire_stiffness_factor = interface_community.get_params(candidate, ret)
-
+    """
+    BP는 브레이크 포인트 약자 입니다.
+    KpBP: 원하는 속도 구간 넣어주시면 되고요.
+    KpV: 위에 설정한 속도 구간에서의 가속력 이라고 생각하시면 됩니다. 숫자가 클수록 순간 가속력이 높아져요.
+    KiBP : 누적 가속력 브레이크포인트 입니다.
+    KiV: 누적 가속력입니다. 순간 가속력으로 부족한 부분을 채워준다고 생각하시면 됩니다. 숫자가 크면 목표 가속도까지 금방 도달하고, 낮으면 천천히 도달(대신 앞차랑 가까워질 수 있어요)해요. 
+    Thank you by 태하
+    계속 실험을 해봐야 함... 아마도..
+    """
     # *** longitudinal control ***
     if candidate in CANFD_CAR:
       ret.longitudinalTuning.kpV = [0.1]
@@ -240,7 +248,7 @@ class CarInterface(CarInterfaceBase):
       ret.experimentalLongitudinalAvailable = candidate in (HYBRID_CAR | EV_CAR) and candidate not in CANFD_RADAR_SCC_CAR
     else:
       ret.longitudinalTuning.kpBP = [0., 5. * CV.KPH_TO_MS, 10. * CV.KPH_TO_MS, 30. * CV.KPH_TO_MS, 130. * CV.KPH_TO_MS]
-      ret.longitudinalTuning.kpV = [1.2, 1.05, 1.0, 0.92, 0.55]
+      ret.longitudinalTuning.kpV = [1.4, 1.25, 1.0, 0.92, 0.55]
       ret.longitudinalTuning.kiBP = [0., 130. * CV.KPH_TO_MS]
       ret.longitudinalTuning.kiV = [0.1, 0.05]
       ret.stoppingDecelRate = 0.3
@@ -306,8 +314,6 @@ class CarInterface(CarInterfaceBase):
       ret.pcmCruise = False # pcmCruise 가 false 여야 롱컨이됨..??
     else:
       ret.pcmCruise = True # managed by cruise state manager
-      
-    ret.pcmCruise = False # 위 결과와 상관 없이. 무조건 False!! -> 혹시나 이상하면 다시 주석처리 함.
     
     if ret.openpilotLongitudinalControl:
       ret.safetyConfigs[-1].safetyParam |= Panda.FLAG_HYUNDAI_LONG

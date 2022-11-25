@@ -199,7 +199,7 @@ class CarController:
           boost = start_boost * is_accelerating
           accel += boost
 
-        if self.CP.sccBus == 0:
+        if self.CP.sccBus == 0:  # 아마도 여기로 진입 하겠지..?? 개조한게 아니니깐.. 
           can_sends.extend(hyundaican.create_acc_commands(self.packer, CC.enabled, accel, jerk, int(self.frame / 2),
                                                         hud_control.leadVisible, set_speed_in_units, stopping,
                                                           CC.cruiseControl.override, CS))

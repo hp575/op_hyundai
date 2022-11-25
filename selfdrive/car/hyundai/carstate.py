@@ -97,7 +97,7 @@ class CarState(CarStateBase):
     if self.CP.openpilotLongitudinalControl and self.CP.sccBus == 0:
       # These are not used for engage/disengage since openpilot keeps track of state using the buttons
       ret.cruiseState.available = cp.vl["TCS13"]["ACCEnable"] == 0
-      ret.cruiseState.enabled = cp.vl["TCS13"]["ACC_REQ"] == 1
+      ret.cruiseState.enabled = cp.vl["TCS13"]["ACC_REQ"] == 1 # 이값도 뭔가 영향이 있나..????
       ret.cruiseState.standstill = False
     else:
       ret.cruiseState.available = cp_cruise.vl["SCC11"]["MainMode_ACC"] == 1
@@ -105,7 +105,7 @@ class CarState(CarStateBase):
       ret.cruiseState.standstill = cp_cruise.vl["SCC11"]["SCCInfoDisplay"] == 4.
       ret.cruiseState.speed = cp_cruise.vl["SCC11"]["VSetDis"] * speed_conv
       ret.cruiseState.gapAdjust = cp_cruise.vl["SCC11"]["TauGapSet"]
-
+    print('cruise state !!!!  = {},{},{}'.format(cp.vl["TCS13"]["ACCEnable"],cp.vl["TCS13"]["ACC_REQ"],cp_cruise.vl["SCC11"]["MainMode_ACC"])) # Test
     # TODO: Find brake pressure
     ret.brake = 0
     ret.brakePressed = cp.vl["TCS13"]["DriverBraking"] != 0
@@ -276,7 +276,8 @@ class CarState(CarStateBase):
       ret.cruiseState.standstill = cp_cruise_info.vl["SCC_CONTROL"]["CRUISE_STANDSTILL"] == 1
       ret.cruiseState.enabled = cp_cruise_info.vl["SCC_CONTROL"]["ACCMode"] in (1, 2)
       self.cruise_info = copy.copy(cp_cruise_info.vl["SCC_CONTROL"])
-
+      print('LongitudinalControl_msg!!!!  = {},{},{}'.format(ret.cruiseState.speed,ret.cruiseState.standstill,ret.cruiseState.enabled)) # Test
+    
     cruise_btn_msg = "CRUISE_BUTTONS_ALT" if self.CP.flags & HyundaiFlags.CANFD_ALT_BUTTONS else "CRUISE_BUTTONS"
     self.prev_cruise_buttons = self.cruise_buttons[-1]
     self.cruise_buttons.extend(cp.vl_all[cruise_btn_msg]["CRUISE_BUTTONS"])

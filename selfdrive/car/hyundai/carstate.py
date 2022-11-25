@@ -105,7 +105,7 @@ class CarState(CarStateBase):
       ret.cruiseState.standstill = cp_cruise.vl["SCC11"]["SCCInfoDisplay"] == 4.
       ret.cruiseState.speed = cp_cruise.vl["SCC11"]["VSetDis"] * speed_conv
       ret.cruiseState.gapAdjust = cp_cruise.vl["SCC11"]["TauGapSet"]
-    print('cruise state !!!!  = {},{},{}'.format(cp.vl["TCS13"]["ACCEnable"],cp.vl["TCS13"]["ACC_REQ"],cp_cruise.vl["SCC11"]["MainMode_ACC"])) # Test
+    print('cruise state !!!!  = {},{}'.format(cp.vl["TCS13"]["ACCEnable"],cp.vl["TCS13"]["ACC_REQ"])) # Test
     # TODO: Find brake pressure
     ret.brake = 0
     ret.brakePressed = cp.vl["TCS13"]["DriverBraking"] != 0

@@ -165,6 +165,7 @@ class CruiseStateManager:
 
     if btn == ButtonType.cancel:
       self.enabled = False
+      CS.cruiseState.available = False
       
     #if btn == ButtonType.cruise_buttons:
       #self.enabled = True   

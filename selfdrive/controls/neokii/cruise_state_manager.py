@@ -72,12 +72,15 @@ class CruiseStateManager:
 
     cruise_button = cruise_buttons[-1]
     if cruise_button != self.prev_cruise_button:
+      print('여기는 무슨 조건이???')
       self.button_events = [create_button_event(cruise_button, self.prev_cruise_button, buttons_dict)]
       if cruise_button != 0 and self.prev_cruise_button != 0:
         self.button_events.append(create_button_event(0, self.prev_cruise_button, buttons_dict))
         self.prev_cruise_button = 0
+        print('버튼 안눌렀나?????')
       else:
         self.prev_cruise_button = cruise_button
+        print('버튼 눌렀나..???')
 
     button = self.update_buttons()
     if button != ButtonType.unknown:

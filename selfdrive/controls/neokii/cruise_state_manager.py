@@ -61,26 +61,24 @@ class CruiseStateManager:
     return self.is_resume_spam_allowed(CP)
 
   # CS - CarState cereal message
-  def update(self, CS, main_buttons, cruise_buttons, buttons_dict, available=-1, cruise_state_control=True):
-    print('update_msg-1  = {}'.format(main_buttons[-1]))
+  def update(self, CS, main_buttons, cruise_buttons, buttons_dict, available=-1, cruise_state_control=True):\
+
     if available >= 0:
       self.available = available
     elif main_buttons[-1] != self.prev_main_buttons and main_buttons[-1]:
       self.available = not self.available
+      print('main_buttons 눌렀음...  = {},{},{}'.format(main_buttons[-1],self.prev_main_buttons,self.available))
      
     self.prev_main_buttons = main_buttons[-1]
 
     cruise_button = cruise_buttons[-1]
     if cruise_button != self.prev_cruise_button:
-      print('여기는 무슨 조건이???')
       self.button_events = [create_button_event(cruise_button, self.prev_cruise_button, buttons_dict)]
       if cruise_button != 0 and self.prev_cruise_button != 0:
         self.button_events.append(create_button_event(0, self.prev_cruise_button, buttons_dict))
         self.prev_cruise_button = 0
-        print('버튼 안눌렀나?????')
       else:
         self.prev_cruise_button = cruise_button
-        print('버튼 눌렀나..???')
 
     button = self.update_buttons()
     if button != ButtonType.unknown:
@@ -112,7 +110,7 @@ class CruiseStateManager:
 
     if self.btn_count > 0:
       self.btn_count += 1
-    # allow_enable = any(btn in ENABLE_BUTTONS for btn in self.CS.cruise_buttons) or any(self.CS.main_buttons)
+
     for b in self.button_events:
       if b.pressed and self.btn_count == 0 \
           and (
@@ -171,7 +169,7 @@ class CruiseStateManager:
 
     if btn == ButtonType.cancel:
       self.enabled = False
-      self.available = False
+      self.available = False # 메인 화면으로 다시 돌아가기 위한.. 추가.. 대신 메드모드가 없다.. 
       
     #if btn == ButtonType.cruise_buttons:
       #self.enabled = True   

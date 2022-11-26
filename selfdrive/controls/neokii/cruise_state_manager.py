@@ -62,11 +62,7 @@ class CruiseStateManager:
 
   # CS - CarState cereal message
   def update(self, CS, main_buttons, cruise_buttons, buttons_dict, available=-1, cruise_state_control=True):
-    print('update_msg-1  = {}'.format(main_buttons))
-    print('update_msg-2  = {}'.format(cruise_buttons))
-    print('update_msg-3  = {}'.format(buttons_dict))
-    print('update_msg-4  = {}'.format(available))
-    print('update_msg-5  = {}'.format(cruise_state_control))
+    print('update_msg-1  = {}'.format(main_buttons[-1]))
     if available >= 0:
       self.available = available
     elif main_buttons[-1] != self.prev_main_buttons and main_buttons[-1]:
@@ -87,8 +83,8 @@ class CruiseStateManager:
     if button != ButtonType.unknown:
       self.update_cruise_state(CS, int(round(self.speed * CV.MS_TO_KPH)), button)
 
-    #if not self.available:
-     # self.enabled = False
+    if not self.available:
+      self.enabled = False
 
     if self.prev_brake_pressed != CS.brakePressed and CS.brakePressed:
       self.enabled = False

@@ -171,7 +171,7 @@ class CarState(CarStateBase):
     self.prev_cruise_buttons = self.cruise_buttons[-1]
     self.cruise_buttons.extend(cp.vl_all["CLU11"]["CF_Clu_CruiseSwState"])
     self.main_buttons.extend(cp.vl_all["CLU11"]["CF_Clu_CruiseSwMain"])
-    print('self.main_buttons  = {}'.format(self.main_buttons.extend(cp.vl_all["CLU11"]["CF_Clu_CruiseSwMain"])))
+    #print('self.main_buttons  = {}'.format(self.main_buttons.extend(cp.vl_all["CLU11"]["CF_Clu_CruiseSwMain"])))
     # ------------------------------------------------------------------------
     # custom
 

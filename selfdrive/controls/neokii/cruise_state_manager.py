@@ -68,7 +68,7 @@ class CruiseStateManager:
     elif main_buttons[-1] != self.prev_main_buttons and main_buttons[-1]:
       self.available = not self.available
       self.enabled = True
-      print('main_buttons 눌렀음...  = {},{},{}'.format(main_buttons[-1],self.prev_main_buttons,self.available))
+    print('buttons 눌렀음...  = {},{},{},{}'.format(main_buttons[-1],cruise_buttons[-1],buttons_dict))
      
     self.prev_main_buttons = main_buttons[-1]
 

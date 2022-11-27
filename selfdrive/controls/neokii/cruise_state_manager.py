@@ -67,6 +67,7 @@ class CruiseStateManager:
       self.available = available
     elif main_buttons[-1] != self.prev_main_buttons and main_buttons[-1]:
       self.available = not self.available
+      self.enabled = True
       print('main_buttons 눌렀음...  = {},{},{}'.format(main_buttons[-1],self.prev_main_buttons,self.available))
      
     self.prev_main_buttons = main_buttons[-1]
@@ -83,9 +84,6 @@ class CruiseStateManager:
     button = self.update_buttons()
     if button != ButtonType.unknown:
       self.update_cruise_state(CS, int(round(self.speed * CV.MS_TO_KPH)), button)
-    if main_buttons[-1] == 1.0 :       
-       self.enabled = True
-       self.available = True
 
     if not self.available:
       self.enabled = False

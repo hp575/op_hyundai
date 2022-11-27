@@ -168,7 +168,7 @@ class CruiseStateManager:
     if btn == ButtonType.cancel:
       self.enabled = False
       self.available = False # 메인 화면으로 다시 돌아가기 위한.. 추가.. 대신 메드모드가 없다.. 
-      print('ButtonType.cancel  = {},{},{}'.format(main_buttons[-1],self.enabled,self.available))
+      print('ButtonType.cancel  = {},{}'.format(self.enabled,self.available))
       
     #if btn == ButtonType.cruise_buttons:
       #self.enabled = True   

@@ -68,7 +68,7 @@ class CruiseStateManager:
     elif main_buttons[-1] != self.prev_main_buttons and main_buttons[-1]:
       self.available = not self.available
       self.enabled = True
-    print('buttons 눌렀음...  = {},{},{}'.format(main_buttons[-1],cruise_buttons[-1],buttons_dict))
+    #print('buttons 눌렀음...  = {},{},{}'.format(main_buttons[-1],cruise_buttons[-1],buttons_dict))
      
     self.prev_main_buttons = main_buttons[-1]
 
@@ -83,7 +83,7 @@ class CruiseStateManager:
 
     button = self.update_buttons()
     if button != ButtonType.unknown:
-      self.update_cruise_state(CS, int(round(self.speed * CV.MS_TO_KPH)), button)
+      self.update_cruise_state(CS, int(round(self.speed * CV.MPH_TO_KPH)), button,main_buttons)
 
     if not self.available:
       self.enabled = False
@@ -133,7 +133,14 @@ class CruiseStateManager:
 
     return btn
 
-  def update_cruise_state(self, CS, v_cruise_kph, btn):
+  def update_cruise_state(self, CS, v_cruise_kph, btn,main_buttons):
+
+    print('buttons 눌렀음...  = {},{}'.format(v_cruise_kph,self.is_metric))
+    
+    if main_buttons[-1] == 1. : # 크루즈 버튼을 눌렀음...? # 크루즈 버튼을 누르면 바로 메드모드로 동작 하고 싶은데...
+      self.enabled = True
+      v_cruise_kph = 0
+      
     if self.enabled:
       if not self.btn_long_pressed:
         if btn == ButtonType.accelCruise:
@@ -168,7 +175,7 @@ class CruiseStateManager:
     if btn == ButtonType.cancel:
       self.enabled = False
       self.available = False # 메인 화면으로 다시 돌아가기 위한.. 추가.. 대신 메드모드가 없다.. 
-      print('ButtonType.cancel  = {},{}'.format(self.enabled,self.available))
+
       
     #if btn == ButtonType.cruise_buttons:
       #self.enabled = True   

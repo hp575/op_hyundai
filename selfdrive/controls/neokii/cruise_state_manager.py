@@ -67,8 +67,6 @@ class CruiseStateManager:
       self.available = available
     elif main_buttons[-1] != self.prev_main_buttons and main_buttons[-1]:
       self.available = not self.available
-      self.enabled = True
-    #print('buttons 눌렀음...  = {},{},{}'.format(main_buttons[-1],cruise_buttons[-1],buttons_dict))
      
     self.prev_main_buttons = main_buttons[-1]
 
@@ -135,11 +133,7 @@ class CruiseStateManager:
 
   def update_cruise_state(self, CS, v_cruise_kph, btn,main_buttons):
 
-    print('buttons 눌렀음...  = {},{}'.format(v_cruise_kph,self.is_metric))
-    
-    if main_buttons[-1] == 1. : # 크루즈 버튼을 눌렀음...? # 크루즈 버튼을 누르면 바로 메드모드로 동작 하고 싶은데...
-      self.enabled = True
-      v_cruise_kph = 0
+    print('buttons 눌렀음...  = {},{},{}'.format(v_cruise_kph,self.is_metric,main_buttons[-1]))
       
     if self.enabled:
       if not self.btn_long_pressed:
@@ -153,9 +147,14 @@ class CruiseStateManager:
           v_cruise_kph += v_cruise_delta - v_cruise_kph % v_cruise_delta
         elif btn == ButtonType.decelCruise:
           v_cruise_kph -= v_cruise_delta - -v_cruise_kph % v_cruise_delta
+   
     else:
 
       if not self.btn_long_pressed:
+        if main_buttons[-1] >= 1. and not self.enabled : # 크루즈 버튼을 눌렀음...? # 크루즈 버튼을 누르면 바로 메드모드로 동작 하고 싶은데...
+          print('main_buttonsd - 눌렀음?')
+          self.enabled = True
+          v_cruise_kph = 0 
         if btn == ButtonType.decelCruise and not self.enabled:
           self.enabled = True
           v_cruise_kph = CS.vEgoCluster * CV.MS_TO_KPH

@@ -52,7 +52,6 @@ void hyundai_common_cruise_state_check(const int cruise_engaged) {
     controls_allowed = 1;
     cruise_engaged_prev = cruise_engaged;
   }
-  puth("engaged = "); puth(*cruise_engaged); puts("\n");
 }
 
 void hyundai_common_cruise_buttons_check(const int cruise_button, const int main_button) {
@@ -73,7 +72,6 @@ void hyundai_common_cruise_buttons_check(const int cruise_button, const int main
       controls_allowed = 1;
     }
     // 이게 제대로 동작 하면 이게 맞다는거 겠지..???
-    puth(*main_button); puts(","); puth(*main_button_prev); puts(","); puth(*cruise_button); puts("\n"); // 버튼 읽음 테스트...
     // exit controls on cancel press
     //if (cruise_button == HYUNDAI_BTN_CANCEL) {
     //  controls_allowed = 0;

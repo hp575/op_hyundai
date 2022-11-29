@@ -1,5 +1,5 @@
 #include "safety_hyundai_common.h"
-
+#include <stdio.h>
 const SteeringLimits HYUNDAI_STEERING_LIMITS = {
   .max_steer = 384,
   .max_rt_delta = 112,

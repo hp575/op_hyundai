@@ -68,7 +68,7 @@ void hyundai_common_cruise_buttons_check(const int cruise_button, const int main
     bool set = (cruise_button != HYUNDAI_BTN_SET) && (cruise_button_prev == HYUNDAI_BTN_SET);
     bool res = (cruise_button != HYUNDAI_BTN_RESUME) && (cruise_button_prev == HYUNDAI_BTN_RESUME);
     // 모드 버튼을 룰렀을때에 대한 행동..
-    bool Press = (main_button != HYUNDAI_BTN_NONE) //&& (main_button_prev == HYUNDAI_BTN_NONE); //메인 버튼을 눌러 뭔놈이 나오는지 모름.. 대강 예측 해볼뿐....
+    bool Press = (main_button != HYUNDAI_BTN_NONE) ;//&& (main_button_prev == HYUNDAI_BTN_NONE); //메인 버튼을 눌러 뭔놈이 나오는지 모름.. 대강 예측 해볼뿐....
     if (set || res || Press) { // 셋 혹은 리쥼 버튼을 눌렀을때 인게이지 된다. 여기에 메인버튼을 눌렀을때 조건도 추가를 한다면 아마도 인게이지가..??
       controls_allowed = 1;
     }

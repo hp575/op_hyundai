@@ -151,7 +151,7 @@ class CruiseStateManager:
     else:
 
       if not self.btn_long_pressed:
-        if main_buttons[-1] >= 1. and not self.enabled : # 크루즈 버튼을 눌렀음...? # 크루즈 버튼을 누르면 바로 메드모드로 동작 하고 싶은데...
+        if main_buttons[-1] >= 1.0 : # 크루즈 버튼을 눌렀음...? # 크루즈 버튼을 누르면 바로 메드모드로 동작 하고 싶은데...
           print('main_buttonsd - 눌렀음?')
           self.enabled = True
           v_cruise_kph = 0 

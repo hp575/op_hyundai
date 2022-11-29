@@ -215,7 +215,6 @@ static int hyundai_rx_hook(CANPacket_t *to_push) {
     if (addr == 1265) {
       int cruise_button = GET_BYTE(to_push, 0) & 0x7U;
       int main_button = GET_BIT(to_push, 3U); // 크루즈 버튼을 읽는다...
-      puth(main_button); puts(" "); puth(cruise_button); puts("\n"); // 버튼 읽음 테스트...
       hyundai_common_cruise_buttons_check(cruise_button, main_button);
     }
 

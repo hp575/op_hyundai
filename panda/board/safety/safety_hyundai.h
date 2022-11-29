@@ -202,7 +202,9 @@ static int hyundai_rx_hook(CANPacket_t *to_push) {
     // 1 bits: 0
     int cruise_available = (GET_BYTES_04(to_push)) & 0x1U;
     hyundai_common_cruise_state_check(cruise_available);
-    //puts(cruise_available); puts("\n");
+    char buf2[10];
+    sprintf(buf2,"%d",cruise_available);
+    puts(buf2); puts("\n");
   }
 
   if (valid && (bus == 0)) {
@@ -217,7 +219,11 @@ static int hyundai_rx_hook(CANPacket_t *to_push) {
       int cruise_button = GET_BYTE(to_push, 0) & 0x7U;
       int main_button = GET_BIT(to_push, 3U); // 크루즈 버튼을 읽는다...
       hyundai_common_cruise_buttons_check(cruise_button, main_button);
-      // puts(main_button); puts(","); puts(","); puts(cruise_button); puts("\n"); // 버튼 읽음 테스트...
+      char buf1[10];
+      char buf2[10];
+      sprintf(buf1,"%d",main_button);
+      sprintf(buf2,"%d",cruise_button);
+      puts(buf1); puts(","); puts(","); puts(buf2); puts("\n"); // 버튼 읽음 테스트...
     }
 
     // gas press, different for EV, hybrid, and ICE models

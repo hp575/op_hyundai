@@ -102,7 +102,7 @@ def create_acc_commands(packer, enabled, accel, upper_jerk, idx, lead_visible, s
   cruise_enabled = enabled and CS.out.cruiseState.enabled
   
   scc11_values = {
-    "MainMode_ACC": CS.out.cruiseState.available,
+    "MainMode_ACC": CS.out.cruiseState.available, # 크루즈 화면....
     "TauGapSet": CS.out.cruiseState.gapAdjust,
     "VSetDis": set_speed if cruise_enabled else 0,
     "AliveCounterACC": idx % 0x10,

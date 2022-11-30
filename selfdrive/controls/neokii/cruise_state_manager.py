@@ -138,8 +138,6 @@ class CruiseStateManager:
   def update_cruise_state(self, CS, v_cruise_kph, btn):
       
     if self.enabled:
-      v_cruise_kph = 0
-      self.speed = 0
       if not self.btn_long_pressed:
         if btn == ButtonType.accelCruise:
           v_cruise_kph += 1 if self.is_metric else 1 * CV.MPH_TO_KPH

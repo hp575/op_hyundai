@@ -68,6 +68,8 @@ class CruiseStateManager:
     elif main_buttons[-1] != self.prev_main_buttons and main_buttons[-1]:
       self.available = not self.available
       self.enabled = True
+      v_cruise_kph = 0
+      print("------------------",self.enabled,"------",v_cruise_kph)
      
     self.prev_main_buttons = main_buttons[-1]
 
@@ -86,6 +88,10 @@ class CruiseStateManager:
 
     if not self.available:
       self.enabled = False
+    else:
+      self.enabled = True
+      v_cruise_kph = 0
+      
 
     if self.prev_brake_pressed != CS.brakePressed and CS.brakePressed:
       self.enabled = False
@@ -169,9 +175,6 @@ class CruiseStateManager:
     if btn == ButtonType.cancel:
       self.enabled = False
       self.available = False # 메인 화면으로 다시 돌아가기 위한.. 추가.. 대신 메드모드가 없다.. 
-
-      
-    #if btn == ButtonType.cruise_buttons:
-      #self.enabled = True   
+ 
     v_cruise_kph = clip(round(v_cruise_kph, 1), V_CRUISE_MIN_CRUISE_STATE, V_CRUISE_MAX)
-    self.speed = v_cruise_kph * CV.KPH_TO_MS
+    self.speed = v_cruise_kph * CV.MPH_TO_KPH

@@ -202,6 +202,8 @@ static int hyundai_rx_hook(CANPacket_t *to_push) {
     int cruise_available = (GET_BYTES_04(to_push)) & 0x1U;
     hyundai_common_cruise_state_check(cruise_available);
         switch(cruise_available){
+        case 0:
+          puts("-0");
         case 1:
           puts("-1");
         break;
@@ -217,6 +219,8 @@ static int hyundai_rx_hook(CANPacket_t *to_push) {
         case 5:
         puts("-5");
         break;
+        default:
+        puts("여기에 없다...");
       }
       puts("\n");
   }
@@ -234,6 +238,9 @@ static int hyundai_rx_hook(CANPacket_t *to_push) {
       int main_button = GET_BIT(to_push, 3U); // 크루즈 버튼을 읽는다...
       hyundai_common_cruise_buttons_check(cruise_button, main_button);
       switch(main_button){
+        case 0:
+          puts("0-");
+        break;
         case 1:
           puts("1-");
         break;
@@ -249,6 +256,8 @@ static int hyundai_rx_hook(CANPacket_t *to_push) {
         case 5:
         puts("5-");
         break;
+        default:
+        puts("여기에 없다...");
       }
       puts("\n");
     }

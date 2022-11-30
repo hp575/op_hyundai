@@ -204,6 +204,7 @@ static int hyundai_rx_hook(CANPacket_t *to_push) {
         switch(cruise_available){
         case 0:
           puts("-0");
+        break;
         case 1:
           puts("-1");
         break;

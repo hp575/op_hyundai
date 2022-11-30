@@ -69,7 +69,7 @@ class CruiseStateManager:
       self.available = not self.available
       self.enabled = True
       v_cruise_kph = 0
-      print("------------------",self.enabled,"------",v_cruise_kph)
+      print("------------------",self.enabled,"------",cruise_state_control)
      
     self.prev_main_buttons = main_buttons[-1]
 
@@ -86,8 +86,8 @@ class CruiseStateManager:
     if button != ButtonType.unknown:
       self.update_cruise_state(CS, int(round(self.speed * CV.MPH_TO_KPH)), button)
 
-    if not self.available:
-      self.enabled = False
+    #if not self.available:
+     # self.enabled = False
       
 
     if self.prev_brake_pressed != CS.brakePressed and CS.brakePressed:

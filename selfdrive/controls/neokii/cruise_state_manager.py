@@ -69,7 +69,7 @@ class CruiseStateManager:
       self.available = not self.available
       self.enabled = True
       v_cruise_kph = 0
-      print("------------------",self.enabled,"------",cruise_state_control)
+    print("------------------",self.enabled,"------",cruise_state_control)
      
     self.prev_main_buttons = main_buttons[-1]
 

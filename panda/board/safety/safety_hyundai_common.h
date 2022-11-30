@@ -42,7 +42,7 @@ void hyundai_common_cruise_state_check(const int cruise_engaged) {
   // so keep track of user button presses to deny engagement if no interaction
 
   // enter controls on rising edge of ACC and recent user button press, exit controls when ACC off
-  if (1 || !hyundai_longitudinal) { // 1 || ! 롱컨트롤이 아닐경우에 만 동작? 
+  if (!hyundai_longitudinal) { // 1 || ! 롱컨트롤이 아닐경우에 만 동작? 
     if (cruise_engaged && !cruise_engaged_prev && (hyundai_last_button_interaction < HYUNDAI_PREV_BUTTON_SAMPLES)) {
       controls_allowed = 1;
     }
@@ -70,7 +70,6 @@ void hyundai_common_cruise_buttons_check(const int cruise_button, const int main
     bool Press = 1;//(main_button != HYUNDAI_BTN_NONE) ;//&& (main_button_prev == HYUNDAI_BTN_NONE); //메인 버튼을 눌러 뭔놈이 나오는지 모름.. 대강 예측 해볼뿐....
     if (set || res || Press) { // 셋 혹은 리쥼 버튼을 눌렀을때 인게이지 된다. 여기에 메인버튼을 눌렀을때 조건도 추가를 한다면 아마도 인게이지가..??
       controls_allowed = 1;
-      cruise_engaged_prev = controls_allowed;
     }
     // 이게 제대로 동작 하면 이게 맞다는거 겠지..???
     // exit controls on cancel press

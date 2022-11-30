@@ -105,6 +105,7 @@ class CarState(CarStateBase):
       ret.cruiseState.standstill = cp_cruise.vl["SCC11"]["SCCInfoDisplay"] == 4.
       ret.cruiseState.speed = cp_cruise.vl["SCC11"]["VSetDis"] * speed_conv
       ret.cruiseState.gapAdjust = cp_cruise.vl["SCC11"]["TauGapSet"]
+    print('cruise state  = {}'.format(ret.cruiseState.available))
     # TODO: Find brake pressure
     ret.brake = 0
     ret.brakePressed = cp.vl["TCS13"]["DriverBraking"] != 0
@@ -217,7 +218,7 @@ class CarState(CarStateBase):
     ret.vCluRatio = (ret.vEgo / vEgoClu) if (vEgoClu > 3. and ret.vEgo > 3.) else 1.0
 
     if self.CP.openpilotLongitudinalControl and CruiseStateManager.instance().cruise_state_control:
-      available = ret.cruiseState.available if self.CP.sccBus == 2 else -1
+      available = ret.cruiseState.available if self.CP.sccBus == 0 else -1 # 요건가??
       CruiseStateManager.instance().update(ret, self.main_buttons, self.cruise_buttons, BUTTONS_DICT, available)
 
     return ret

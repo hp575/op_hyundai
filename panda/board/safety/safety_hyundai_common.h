@@ -42,7 +42,7 @@ void hyundai_common_cruise_state_check(const int cruise_engaged) {
   // so keep track of user button presses to deny engagement if no interaction
 
   // enter controls on rising edge of ACC and recent user button press, exit controls when ACC off
-  if (!hyundai_longitudinal) { // 1 || ! 롱컨트롤이 아닐경우에 만 동작? 
+  if (1 || !hyundai_longitudinal) { // 1 || ! 롱컨트롤이 아닐경우에 만 동작? 
     if (cruise_engaged && !cruise_engaged_prev && (hyundai_last_button_interaction < HYUNDAI_PREV_BUTTON_SAMPLES)) {
       controls_allowed = 1;
     }

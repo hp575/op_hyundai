@@ -204,29 +204,7 @@ static int hyundai_rx_hook(CANPacket_t *to_push) {
     // 1 bits: 0
     int cruise_available = (GET_BYTES_04(to_push)) & 0x1U;
     hyundai_common_cruise_state_check(cruise_available);
-      switch(cruise_available){
-        case 0:
-          print("-0");
-        break;
-        case 1:
-          print("-1");
-        break;
-        case 2:
-        print("-2");
-        break;
-        case 3:
-        print("-3");
-        break;
-        case 4:
-        print("-4");
-        break;
-        case 5:
-        print("-5");
-        break;
-        default:
-        print("여기에 없다...");
-      }
-      print("\n");
+      
   }
 
   if (valid && (bus == 0)) {
@@ -241,29 +219,7 @@ static int hyundai_rx_hook(CANPacket_t *to_push) {
       int cruise_button = GET_BYTE(to_push, 0) & 0x7U;
       int main_button = GET_BIT(to_push, 3U);
       hyundai_common_cruise_buttons_check(cruise_button, main_button);
-      switch(main_button){
-        case 0:
-          pprintuts("0-");
-        break;
-        case 1:
-          print("1-");
-        break;
-        case 2:
-        print("2-");
-        break;
-        case 3:
-        print("3-");
-        break;
-        case 4:
-        print("4-");
-        break;
-        case 5:
-        print("5-");
-        break;
-        default:
-        print("여기에 없다...");
-      }
-      print("\n");
+      
     }
 
     // gas press, different for EV, hybrid, and ICE models

@@ -280,18 +280,16 @@ class CarInterfaceBase(ABC):
 
     # we engage when pcm is active (rising edge)
     # enabling can optionally be blocked by the car interface
-    
-    if pcm_enable :  # test pcm_enable 가 true 면 롱컨이 아닌상태 롱컨 아닐떄 여기서 인게이지??  22.11.24 - PolorBear
+    if True : #pcm_enable :  # test pcm_enable 가 true 면 롱컨이 아닌상태 롱컨 아닐떄 여기서 인게이지??  22.11.24 - PolorBear
       if cs_out.cruiseState.available and not self.CS.out.cruiseState.available and allow_enable:
         events.add(EventName.pcmEnable)
-      elif not cs_out.cruiseState.enabled:
+      elif not cs_out.cruiseState.available:
         events.add(EventName.pcmDisable)
       else:
         if cs_out.cruiseState.enabled and not self.CS.out.cruiseState.enabled:
           events.add(EventName.cruiseOn)
         elif not cs_out.cruiseState.enabled and self.CS.out.cruiseState.enabled:
           events.add(EventName.cruiseOff)
-
     return events
 
 

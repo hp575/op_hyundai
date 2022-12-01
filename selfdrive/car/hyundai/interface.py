@@ -4,7 +4,8 @@ from common.numpy_fast import interp
 from panda import Panda
 from common.conversions import Conversions as CV
 from selfdrive.car.hyundai import interface_community
-from selfdrive.car.hyundai.values import HyundaiFlags, CAR, DBC, CANFD_CAR, CAMERA_SCC_CAR, CANFD_RADAR_SCC_CAR, EV_CAR, HYBRID_CAR, LEGACY_SAFETY_MODE_CAR, Buttons, CarControllerParams
+from selfdrive.car.hyundai.values import HyundaiFlags, CAR, DBC, CANFD_CAR, CAMERA_SCC_CAR, CANFD_RADAR_SCC_CAR, EV_CAR, \
+  HYBRID_CAR, LEGACY_SAFETY_MODE_CAR, Buttons, CarControllerParams
 from selfdrive.car.hyundai.radar_interface import RADAR_START_ADDR
 from selfdrive.car import STD_CARGO_KG, create_button_event, scale_rot_inertia, scale_tire_stiffness, gen_empty_fingerprint, get_safety_config
 from selfdrive.car.interfaces import CarInterfaceBase
@@ -22,7 +23,6 @@ BUTTONS_DICT = {Buttons.RES_ACCEL: ButtonType.accelCruise, Buttons.SET_DECEL: Bu
 
 
 class CarInterface(CarInterfaceBase):
-  @staticmethod
   def get_pid_accel_limits(CP, current_speed, cruise_speed):
 
     v_current_kph = current_speed * CV.MS_TO_KPH
@@ -33,8 +33,7 @@ class CarInterface(CarInterfaceBase):
     return CarControllerParams.ACCEL_MIN, interp(v_current_kph, gas_max_bp, gas_max_v)
 
   @staticmethod
-  def get_params(candidate, fingerprint=gen_empty_fingerprint(), car_fw=[], experimental_long=False):  # pylint: disable=dangerous-default-value
-    ret = CarInterfaceBase.get_std_params(candidate, fingerprint)
+  def _get_params(ret, candidate, fingerprint, car_fw, experimental_long):
 
     ret.carName = "hyundai"
     ret.radarOffCan = RADAR_START_ADDR not in fingerprint[1] or DBC[ret.carFingerprint]["radar"] is None
@@ -299,6 +298,7 @@ class CarInterface(CarInterfaceBase):
       ret.sccBus = 2 if (candidate in CAMERA_SCC_CAR or Params().get_bool('SccOnBus2')) else 0
       ret.hasAutoHold = 1151 in fingerprint[0]
       ret.hasLfaHda = 1157 in fingerprint[0]
+      ret.hasNav = 1348 in fingerprint[0]
 
       if not ret.openpilotLongitudinalControl:
         ret.radarOffCan = ret.sccBus == -1
@@ -326,9 +326,6 @@ class CarInterface(CarInterfaceBase):
     if ret.centerToFront == 0:
       ret.centerToFront = ret.wheelbase * 0.4
 
-    # TODO: get actual value, for now starting with reasonable value for
-    # civic and scaling by mass and wheelbase
-    ret.rotationalInertia = scale_rot_inertia(ret.mass, ret.wheelbase)
 
     # TODO: start from empirically derived lateral slip stiffness for the civic and scale by
     # mass and CG position, so all cars will have approximately similar dyn behaviors

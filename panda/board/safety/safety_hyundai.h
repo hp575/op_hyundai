@@ -1,4 +1,5 @@
 #include "safety_hyundai_common.h"
+
 const SteeringLimits HYUNDAI_STEERING_LIMITS = {
   .max_steer = 384,
   .max_rt_delta = 112,
@@ -17,8 +18,10 @@ const SteeringLimits HYUNDAI_STEERING_LIMITS = {
   .has_steer_req_tolerance = true,
 };
 
-const int HYUNDAI_MAX_ACCEL = 200;  // 1/100 m/s2
-const int HYUNDAI_MIN_ACCEL = -350; // 1/100 m/s2
+const LongitudinalLimits HYUNDAI_LONG_LIMITS = {
+  .max_accel = 200,   // 1/100 m/s2
+  .min_accel = -350,  // 1/100 m/s2
+};
 
 const CanMsg HYUNDAI_TX_MSGS[] = {
   {593, 2, 8},                              // MDPS12, Bus 2
@@ -201,29 +204,29 @@ static int hyundai_rx_hook(CANPacket_t *to_push) {
     // 1 bits: 0
     int cruise_available = (GET_BYTES_04(to_push)) & 0x1U;
     hyundai_common_cruise_state_check(cruise_available);
-        switch(cruise_available){
+      switch(cruise_available){
         case 0:
-          puts("-0");
+          print("-0");
         break;
         case 1:
-          puts("-1");
+          print("-1");
         break;
         case 2:
-        puts("-2");
+        print("-2");
         break;
         case 3:
-        puts("-3");
+        print("-3");
         break;
         case 4:
-        puts("-4");
+        print("-4");
         break;
         case 5:
-        puts("-5");
+        print("-5");
         break;
         default:
-        puts("여기에 없다...");
+        print("여기에 없다...");
       }
-      puts("\n");
+      print("\n");
   }
 
   if (valid && (bus == 0)) {
@@ -236,31 +239,31 @@ static int hyundai_rx_hook(CANPacket_t *to_push) {
     // ACC steering wheel buttons
     if (addr == 1265) {
       int cruise_button = GET_BYTE(to_push, 0) & 0x7U;
-      int main_button = GET_BIT(to_push, 3U); // 크루즈 버튼을 읽는다...
+      int main_button = GET_BIT(to_push, 3U);
       hyundai_common_cruise_buttons_check(cruise_button, main_button);
       switch(main_button){
         case 0:
-          puts("0-");
+          pprintuts("0-");
         break;
         case 1:
-          puts("1-");
+          print("1-");
         break;
         case 2:
-        puts("2-");
+        print("2-");
         break;
         case 3:
-        puts("3-");
+        print("3-");
         break;
         case 4:
-        puts("4-");
+        print("4-");
         break;
         case 5:
-        puts("5-");
+        print("5-");
         break;
         default:
-        puts("여기에 없다...");
+        print("여기에 없다...");
       }
-      puts("\n");
+      print("\n");
     }
 
     // gas press, different for EV, hybrid, and ICE models
@@ -335,16 +338,10 @@ static int hyundai_tx_hook(CANPacket_t *to_send, bool longitudinal_allowed) {
     int aeb_decel_cmd = GET_BYTE(to_send, 2);
     int aeb_req = GET_BIT(to_send, 54U);
 
-    bool violation = 0;
+    bool violation = false;
 
-    if (!longitudinal_allowed) {
-      if ((desired_accel_raw != 0) || (desired_accel_val != 0)) {
-        violation = 1;
-      }
-    }
-    violation |= max_limit_check(desired_accel_raw, HYUNDAI_MAX_ACCEL, HYUNDAI_MIN_ACCEL);
-    violation |= max_limit_check(desired_accel_val, HYUNDAI_MAX_ACCEL, HYUNDAI_MIN_ACCEL);
-
+    violation |= longitudinal_accel_checks(desired_accel_raw, HYUNDAI_LONG_LIMITS, longitudinal_allowed);
+    violation |= longitudinal_accel_checks(desired_accel_val, HYUNDAI_LONG_LIMITS, longitudinal_allowed);
     violation |= (aeb_decel_cmd != 0);
     violation |= (aeb_req != 0);
 

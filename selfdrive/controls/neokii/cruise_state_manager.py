@@ -3,7 +3,7 @@ from cereal import car
 from common.numpy_fast import clip
 from selfdrive.car import create_button_event
 from common.conversions import Conversions as CV
-from common.params import Params
+from common.params import Params, put_nonblocking
 from selfdrive.car.hyundai.values import CANFD_CAR
 from selfdrive.controls.lib.drive_helpers import V_CRUISE_MAX, V_CRUISE_ENABLE_MIN
 
@@ -35,7 +35,10 @@ class CruiseStateManager:
     self.available = False
     self.enabled = False
     self.speed = V_CRUISE_ENABLE_MIN * CV.KPH_TO_MS
-    self.gapAdjust = 4
+    gap = Params().get('SccGapAdjust')
+    self.gapAdjust = int(gap) if gap is not None else 4
+    if self.gapAdjust < 1 or self.gapAdjust > 4:
+      self.gapAdjust = 4
 
     self.prev_speed = 0
     self.prev_main_buttons = 0
@@ -106,9 +109,10 @@ class CruiseStateManager:
     if button == ButtonType.accelCruise or button == ButtonType.decelCruise:
       CS.cruiseState.enabled = self.enabled
       print('cruiseState.enabled')
-      
+
     print('cruise_state_control - TRUE  = {},{},{},{}'.format(CS.cruiseState.enabled,CS.cruiseState.standstill,CS.cruiseState.standstill,CS.cruiseState.speed,CS.cruiseState.gapAdjust))
     print('cruise_state_control - FALSE  = {},{},{},{}'.format(self.enabled,False,self.speed,self.gapAdjust))
+  
   def update_buttons(self):
     if self.button_events is None:
       return ButtonType.unknown
@@ -175,7 +179,8 @@ class CruiseStateManager:
       self.gapAdjust -= 1
       if self.gapAdjust < 1:
         self.gapAdjust = 4
-
+      put_nonblocking("SccGapAdjust", str(self.gapAdjust))
+      
     if btn == ButtonType.cancel:
       self.enabled = False
       self.available = False # 메인 화면으로 다시 돌아가기 위한.. 추가.. 대신 메드모드가 없다.. 

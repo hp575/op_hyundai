@@ -13,7 +13,7 @@ Ecu = car.CarParams.Ecu
 
 
 class CarControllerParams:
-  ACCEL_MIN = -3.0 # m/s
+  ACCEL_MIN = -3.5 # m/s
   ACCEL_MAX = 2.0 # m/s
 
   def __init__(self, CP):
@@ -49,6 +49,7 @@ class HyundaiFlags(IntFlag):
   CANFD_ALT_BUTTONS = 2
   CANFD_ALT_GEARS = 4
   CANFD_CAMERA_SCC = 8
+
 
 class CAR:
   # Hyundai
@@ -154,11 +155,9 @@ CAR_INFO: Dict[str, Optional[Union[HyundaiCarInfo, List[HyundaiCarInfo]]]] = {
   CAR.TUCSON_HYBRID_4TH_GEN: HyundaiCarInfo("Hyundai Tucson Hybrid 2022", "All", harness=Harness.hyundai_n),
   CAR.SANTA_CRUZ_1ST_GEN: HyundaiCarInfo("Hyundai Santa Cruz 2021-22", "Smart Cruise Control (SCC)", harness=Harness.hyundai_n),
   CAR.NEXO: HyundaiCarInfo("Hyundai NEXO", "All", harness=Harness.hyundai_n),
-
   # Kia
   CAR.KIA_FORTE: HyundaiCarInfo("Kia Forte 2019-21", harness=Harness.hyundai_g),
-  CAR.KIA_K5_2021: HyundaiCarInfo("Kia K5 2021-22", harness=Harness.hyundai_h),
-  
+  CAR.KIA_K5_2021: HyundaiCarInfo("Kia K5 2021-22", harness=Harness.hyundai_a),
   CAR.KIA_NIRO_EV: [
     HyundaiCarInfo("Kia Niro EV 2019", "All", "https://www.youtube.com/watch?v=lT7zcG6ZpGo", harness=Harness.hyundai_h),
     HyundaiCarInfo("Kia Niro EV 2020", "All", "https://www.youtube.com/watch?v=lT7zcG6ZpGo", harness=Harness.hyundai_f),
@@ -971,21 +970,6 @@ FW_VERSIONS = {
       b'\xf1\x81640H0051\x00\x00\x00\x00\x00\x00\x00\x00',
     ],
   },
-  CAR.NEXO: {
-    (Ecu.fwdCamera, 0x7c4, None): [
-      b'\xf1\x00FE  MFC  AT KOR LHD 1.00 1.04 99211-M5000 180918',
-    ],
-    (Ecu.fwdRadar, 0x7d0, None): [
-      b'\xf1\x00FE__ SCC FHCUP      1.00 1.03 99110-M5000         ',
-      b'\xf1\x00FE__ SCC FHCUP      1.00 1.04 99110-M5000         ',
-    ],
-    (Ecu.abs, 0x7c1, None): [
-      b'\xf1\x00FE IEB \x01 312 \x11\x13 58520-M5000',
-    ],
-    (Ecu.eps, 0x7d4, None): [
-      b'\xf1\x00FE  MDPS C 1.00 1.05 56340-M5000 9903',
-    ],
-  },
   CAR.GENESIS_G90: {
     (Ecu.transmission, 0x7e1, None): [b'\xf1\x87VDGMD15866192DD3x\x88x\x89wuFvvfUf\x88vWwgwwwvfVgx\x87o\xff\xbc^\xf1\x81E14\x00\x00\x00\x00\x00\x00\x00\xf1\x00bcshcm49  E14\x00\x00\x00\x00\x00\x00\x00SHI0G50NB1tc5\xb7'],
     (Ecu.fwdRadar, 0x7d0, None): [b'\xf1\x00HI__ SCC F-CUP      1.00 1.01 96400-D2100         '],
@@ -1041,11 +1025,13 @@ FW_VERSIONS = {
       b'\xf1\x8799110L2000\xf1\000DL3_ SCC FHCUP      1.00 1.03 99110-L2000         ',
       b'\xf1\x8799110L2100\xf1\x00DL3_ SCC F-CUP      1.00 1.03 99110-L2100         ',
       b'\xf1\x8799110L2100\xf1\x00DL3_ SCC FHCUP      1.00 1.03 99110-L2100         ',
+      b'\xf1\x00DL3_ SCC F-CUP      1.00 1.03 99110-L2100         ',
     ],
     (Ecu.eps, 0x7D4, None): [
       b'\xf1\x8756310-L3110\xf1\000DL3 MDPS C 1.00 1.01 56310-L3110 4DLAC101',
       b'\xf1\x8756310-L3220\xf1\x00DL3 MDPS C 1.00 1.01 56310-L3220 4DLAC101',
       b'\xf1\x8757700-L3000\xf1\x00DL3 MDPS R 1.00 1.02 57700-L3000 4DLAP102',
+      b'\xf1\x00DL3 MDPS C 1.00 1.01 56310-L3220 4DLAC101',
     ],
     (Ecu.fwdCamera, 0x7C4, None): [
       b'\xf1\x00DL3 MFC  AT USA LHD 1.00 1.03 99210-L3000 200915',
@@ -1056,6 +1042,7 @@ FW_VERSIONS = {
       b'\xf1\x8758910-L3200\xf1\000DL ESC \006 101 \004\002 58910-L3200',
       b'\xf1\x8758910-L3800\xf1\x00DL ESC \t 101 \x07\x02 58910-L3800',
       b'\xf1\x8758910-L3600\xf1\x00DL ESC \x03 100 \x08\x02 58910-L3600',
+      b'\xf1\x00DL ESC \t 100 \x06\x02 58910-L3800',
     ],
     (Ecu.engine, 0x7E0, None): [
       b'\xf1\x87391212MKT0',
@@ -1068,6 +1055,7 @@ FW_VERSIONS = {
       b'\xf1\x87SALFEA6046104GK2wvwgeTeFg\x88\x96xwwwwffvfe?\xfd\xff\x86fo\xff\x97A\xf1\x81U913\x00\x00\x00\x00\x00\x00\xf1\x00bcsh8p54  U913\x00\x00\x00\x00\x00\x00TDL2T16NB1ia\x0b\xb8',
       b'\xf1\x87SCMSAA8572454GK1\x87x\x87\x88Vf\x86hgwvwvwwgvwwgT?\xfb\xff\x97fo\xffH\xb8\xf1\x81U913\x00\x00\x00\x00\x00\x00\xf1\x00bcsh8p54  U913\x00\x00\x00\x00\x00\x00TDL4T16NB05\x94t\x18',
       b'\xf1\x87954A02N300\x00\x00\x00\x00\x00\xf1\x81T02730A1  \xf1\x00T02601BL  T02730A1  WDL3T25XXX730NS2b\x1f\xb8%',
+      b'\xf1\x00bcsh8p54  U913\x00\x00\x00\x00\x00\x00TDL4T16NB05\x94t\x18',
     ],
   },
   CAR.KONA_EV: {
@@ -1476,6 +1464,21 @@ FW_VERSIONS = {
       b'\xf1\x00JK1_ SCC FHCUP      1.00 1.02 99110-AR000         ',
     ],
   },
+  CAR.NEXO: {
+    (Ecu.fwdCamera, 0x7c4, None): [
+      b'\xf1\x00FE  MFC  AT KOR LHD 1.00 1.04 99211-M5000 180918',
+    ],
+    (Ecu.fwdRadar, 0x7d0, None): [
+      b'\xf1\x00FE__ SCC FHCUP      1.00 1.03 99110-M5000         ',
+      b'\xf1\x00FE__ SCC FHCUP      1.00 1.04 99110-M5000         ',
+    ],
+    (Ecu.abs, 0x7c1, None): [
+      b'\xf1\x00FE IEB \x01 312 \x11\x13 58520-M5000',
+    ],
+    (Ecu.eps, 0x7d4, None): [
+      b'\xf1\x00FE  MDPS C 1.00 1.05 56340-M5000 9903',
+    ],
+  },
 }
 
 CHECKSUM = {
@@ -1498,6 +1501,7 @@ FEATURES = {
 }
 
 CANFD_CAR = {CAR.KIA_EV6, CAR.IONIQ_5, CAR.TUCSON_HYBRID_4TH_GEN, CAR.KIA_SPORTAGE_HYBRID_5TH_GEN, CAR.SANTA_CRUZ_1ST_GEN, CAR.KIA_SPORTAGE_5TH_GEN, CAR.GENESIS_GV70_1ST_GEN}
+
 # The radar does SCC on these cars when HDA I, rather than the camera
 CANFD_RADAR_SCC_CAR = {CAR.GENESIS_GV70_1ST_GEN, }
 

@@ -78,7 +78,7 @@ void hyundai_common_cruise_buttons_check(const int cruise_button, const int main
     //}
 
     cruise_button_prev = cruise_button;
-    main_button_prev = main_button;
+  //  main_button_prev = main_button;
   }
 }
 

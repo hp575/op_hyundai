@@ -1,8 +1,8 @@
 #include "safety_hyundai_common.h"
 
 const SteeringLimits HYUNDAI_STEERING_LIMITS = {
-  .max_steer = 384,
-  .max_rt_delta = 112,
+  .max_steer = 409,
+  .max_rt_delta = 120,
   .max_rt_interval = 250000,
   .max_rate_up = 3,
   .max_rate_down = 7,
@@ -203,8 +203,8 @@ static int hyundai_rx_hook(CANPacket_t *to_push) {
   if (valid && (addr == 1056)) { //  MainMode_ACC
     // 1 bits: 0
     int cruise_available = (GET_BYTES_04(to_push)) & 0x1U;
+    puth(cruise_available);print(" = cruise_available\n");
     hyundai_common_cruise_state_check(cruise_available);
-      
   }
 
   if (valid && (bus == 0)) {
@@ -218,8 +218,9 @@ static int hyundai_rx_hook(CANPacket_t *to_push) {
     if (addr == 1265) {
       int cruise_button = GET_BYTE(to_push, 0) & 0x7U;
       int main_button = GET_BIT(to_push, 3U);
+      puth(cruise_button);print(" = cruise_button\n");
+      puth(main_button);print(" = main_button\n");
       hyundai_common_cruise_buttons_check(cruise_button, main_button);
-      
     }
 
     // gas press, different for EV, hybrid, and ICE models

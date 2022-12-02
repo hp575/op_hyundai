@@ -200,7 +200,6 @@ class CarController:
           boost = start_boost * is_accelerating
           accel += boost
 
-        if self.CP.sccBus == 0:  # 아마도 여기로 진입 하겠지..?? 개조한게 아니니깐.. 
         stock_cam = False
         if self.CP.sccBus == 2:
           aReqValue = CS.scc12["aReqValue"]

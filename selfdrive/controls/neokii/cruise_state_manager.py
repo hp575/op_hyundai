@@ -154,11 +154,10 @@ class CruiseStateManager:
           v_cruise_kph -= v_cruise_delta - -v_cruise_kph % v_cruise_delta
    
     else:
-      if btn == ButtonType.accelCruise or btn == ButtonType.decelCruise:
-        CS.cruiseState.enabled = self.enabled
-        print('cruiseState.enabled')
-      
       if not self.btn_long_pressed:
+        if btn == ButtonType.accelCruise or btn == ButtonType.decelCruise:
+          CS.cruiseState.enabled = self.enabled
+          print('cruiseState.enabled')
         if btn == ButtonType.decelCruise and not self.enabled:
           self.enabled = True
           v_cruise_kph = CS.vEgoCluster * CV.MS_TO_KPH

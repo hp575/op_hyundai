@@ -100,10 +100,13 @@ class CruiseStateManager:
       CS.cruiseState.standstill = False
       CS.cruiseState.speed = self.speed
       CS.cruiseState.gapAdjust = self.gapAdjust
-
+      
+    if self.enabled :
+      CS.cruiseState.enabled = self.enabled
+      print('cruiseState.enabled')
 
     #print('cruise_state_control - TRUE  = {},{},{},{}'.format(CS.cruiseState.enabled,CS.cruiseState.standstill,CS.cruiseState.standstill,CS.cruiseState.speed,CS.cruiseState.gapAdjust))
-    #print('cruise_state_control - FALSE  = {},{},{},{}'.format(self.enabled,False,self.speed,self.gapAdjust))
+    print('cruise_state_control - FALSE  = {},{},{},{}'.format(self.enabled,False,self.speed,self.gapAdjust))
   
   def update_buttons(self):
     if self.button_events is None:
@@ -157,18 +160,14 @@ class CruiseStateManager:
       if not self.btn_long_pressed:
         if btn == ButtonType.decelCruise and not self.enabled:
           self.enabled = True
-          CS.cruiseState.enabled = self.enabled
           v_cruise_kph = CS.vEgoCluster * CV.MS_TO_KPH
-          print('cruiseState.enabled')
           if CS.vEgoCluster < 0.1:
             v_cruise_kph = clip(round(v_cruise_kph, 1), V_CRUISE_ENABLE_MIN, V_CRUISE_MAX)
           else:
             v_cruise_kph = clip(round(v_cruise_kph, 1), V_CRUISE_MIN_CRUISE_STATE, V_CRUISE_MAX)
         elif btn == ButtonType.accelCruise and not self.enabled:
           self.enabled = True
-          CS.cruiseState.enabled = self.enabled
           v_cruise_kph = clip(round(self.speed * CV.MS_TO_KPH, 1), V_CRUISE_ENABLE_MIN, V_CRUISE_MAX)
-          print('cruiseState.enabled')
     
     if btn == ButtonType.gapAdjustCruise and not self.btn_long_pressed:
       self.gapAdjust -= 1

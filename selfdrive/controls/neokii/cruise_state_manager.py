@@ -103,10 +103,10 @@ class CruiseStateManager:
       
     if self.enabled :
       CS.cruiseState.enabled = self.enabled
-      print('cruiseState.enabled')
+      #print('cruiseState.enabled')
 
     #print('cruise_state_control - TRUE  = {},{},{},{}'.format(CS.cruiseState.enabled,CS.cruiseState.standstill,CS.cruiseState.standstill,CS.cruiseState.speed,CS.cruiseState.gapAdjust))
-    print('cruise_state_control - FALSE  = {},{},{},{}'.format(self.enabled,False,self.speed,self.gapAdjust))
+    #print('cruise_state_control - FALSE  = {},{},{},{}'.format(self.enabled,False,self.speed,self.gapAdjust))
   
   def update_buttons(self):
     if self.button_events is None:

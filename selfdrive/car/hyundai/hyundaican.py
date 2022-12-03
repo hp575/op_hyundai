@@ -97,7 +97,7 @@ def create_lfahda_mfc(packer, enabled, hda_set_speed=0):
   }
   return packer.make_can_msg("LFAHDA_MFC", 0, values)
 
-def create_acc_commands(packer, enabled, accel, upper_jerk, idx, lead_visible, set_speed, stopping, long_override, CS, stock_cam,vision_dist):
+def create_acc_commands(packer, enabled, accel, upper_jerk, idx, lead_visible, set_speed, stopping, long_override, CS, stock_cam,vision_dist,cluster_speed):
   commands = []
 
   cruise_enabled = enabled and CS.out.cruiseState.enabled
@@ -111,7 +111,7 @@ def create_acc_commands(packer, enabled, accel, upper_jerk, idx, lead_visible, s
     "ObjValid": 1, # close lead makes controls tighter
     "ACC_ObjStatus": 1 if lead_visible else 0, # close lead makes controls tighter
     "ACC_ObjLatPos": 0,
-    "ACC_ObjRelSpd": 0,
+    "ACC_ObjRelSpd": cluster_speed, # 현재 속도..? 
     "ACC_ObjDist": vision_dist,#1, # close lead makes controls tighter
     }
 

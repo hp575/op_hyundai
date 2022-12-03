@@ -102,7 +102,9 @@ def create_acc_commands(packer, enabled, accel, upper_jerk, idx, lead_visible, s
 
   cruise_enabled = enabled and CS.out.cruiseState.enabled
   objGap = 0 if vision_dist == 0 else 2 if vision_dist < 25 else 3 if vision_dist < 40 else 4 if vision_dist < 70 else 5 
-  print(vision_dist)
+  print('vision_dist = {}'.format(vision_dist))
+  print('cluster_speed = {}'.format(cluster_speed))
+  
   scc11_values = {
     "MainMode_ACC": CS.out.cruiseState.available, # SCC 모드 여부...
     "TauGapSet": CS.out.cruiseState.gapAdjust,

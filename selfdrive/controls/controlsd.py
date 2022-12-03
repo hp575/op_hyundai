@@ -697,7 +697,7 @@ class Controls:
     hudControl.setSpeed = float(self.v_cruise_helper.v_cruise_cluster_kph * CV.KPH_TO_MS)
     hudControl.speedVisible = self.enabled
     hudControl.lanesVisible = self.enabled
-    hudControl.leadVisible = self.sm['longitudinalPlan'].hasLead
+    hudControl.leadVisible = self.sm['longitudinalPlan'].hasLead # 선행차 와의 거리가 나오나..??? 
 
     hudControl.rightLaneVisible = True
     hudControl.leftLaneVisible = True

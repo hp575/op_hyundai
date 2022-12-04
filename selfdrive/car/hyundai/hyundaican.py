@@ -101,7 +101,7 @@ def create_acc_commands(packer, enabled, accel, upper_jerk, idx, lead_visible, s
   commands = []
 
   cruise_enabled = enabled and CS.out.cruiseState.enabled
-  #objGap = 0 if vision_dist == 0 else 2 if vision_dist < 25 else 3 if vision_dist < 40 else 4 if vision_dist < 70 else 5 
+  objGap = 0 if vision_dist == 0 else 2 if vision_dist < 25 else 3 if vision_dist < 40 else 4 if vision_dist < 70 else 5 
   print('vision_dist = {}'.format(vision_dist))
   print('cluster_speed = {}'.format(RelSpd))
   
@@ -113,8 +113,8 @@ def create_acc_commands(packer, enabled, accel, upper_jerk, idx, lead_visible, s
     "ObjValid": 1, # close lead makes controls tighter
     "ACC_ObjStatus": 1 if lead_visible else 0, # close lead makes controls tighter
     "ACC_ObjLatPos": 0,
-    "ACC_ObjRelSpd": 0, # 현재 속도..? 
-    "ACC_ObjDist": 1, # close lead makes controls tighter
+    "ACC_ObjRelSpd": RelSpd, # 현재 속도..? 
+    "ACC_ObjDist": vision_dist, # close lead makes controls tighter
     }
 
   if not stock_cam:
@@ -142,7 +142,7 @@ def create_acc_commands(packer, enabled, accel, upper_jerk, idx, lead_visible, s
     "JerkUpperLimit": upper_jerk, # stock usually is 1.0 but sometimes uses higher values
     "JerkLowerLimit": 5.0, # stock usually is 0.5 but sometimes uses higher values
     "ACCMode": 2 if enabled and long_override else 1 if enabled else 4, # stock will always be 4 instead of 0 after first disengage
-    "ObjGap": 2 if lead_visible else 0, # 5: >30, m, 4: 25-30 m, 3: 20-25 m, 2: < 20 m, 0: no lead # 선행차와의 거리?? 
+    "ObjGap": objGap,#2 if lead_visible else 0, # 5: >30, m, 4: 25-30 m, 3: 20-25 m, 2: < 20 m, 0: no lead # 선행차와의 거리?? 
   }
   commands.append(packer.make_can_msg("SCC14", 0, scc14_values))
 

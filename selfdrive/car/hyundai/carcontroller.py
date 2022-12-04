@@ -13,7 +13,6 @@ from selfdrive.car.interfaces import ACCEL_MAX, ACCEL_MIN
 from selfdrive.controls.neokii.cruise_state_manager import CruiseStateManager
 from selfdrive.controls.neokii.navi_controller import SpeedLimiter
 from selfdrive.controls.neokii.speed_controller import CREEP_SPEED
-from selfdrive.controls.lib.radar_helpers import RADAR_TO_CAMERA
 
 VisualAlert = car.CarControl.HUDControl.VisualAlert
 LongCtrlState = car.CarControl.Actuators.LongControlState
@@ -207,11 +206,9 @@ class CarController:
             accel, stock_cam = self.get_stock_cam_accel(accel, aReqValue, CS.scc11)
 
         if self.CP.sccBus == 0:
-          lead_model = self.CP.sm['modelV2'].leadsV3[0] # 음... 맞나..???
-          vision_dist = lead_model.x[0] - RADAR_TO_CAMERA if lead_model.prob > .5 else 0 # 음... 맞나..??? 
           can_sends.extend(hyundaican.create_acc_commands(self.packer, CC.enabled, accel, jerk, int(self.frame / 2),
                                                         hud_control.leadVisible, set_speed_in_units, stopping,
-                                                          CC.cruiseControl.override, CS, stock_cam,vision_dist))
+                                                          CC.cruiseControl.override, CS, stock_cam,hud_control.objDist))
         else:
           can_sends.extend(hyundaiexcan.create_acc_commands(self.packer, CC.enabled, accel, jerk, int(self.frame / 2),
                                                           hud_control.leadVisible, set_speed_in_units, stopping,

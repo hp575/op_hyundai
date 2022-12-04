@@ -32,6 +32,7 @@ from selfdrive.controls.lib.vehicle_model import VehicleModel
 from selfdrive.locationd.calibrationd import Calibration
 from system.hardware import HARDWARE
 from selfdrive.manager.process_config import managed_processes
+from selfdrive.controls.lib.radar_helpers import RADAR_TO_CAMERA
 
 SOFT_DISABLE_TIME = 3  # seconds
 LDW_MIN_SPEED = 31 * CV.MPH_TO_MS
@@ -698,10 +699,12 @@ class Controls:
     hudControl.speedVisible = self.enabled
     hudControl.lanesVisible = self.enabled
     hudControl.leadVisible = self.sm['longitudinalPlan'].hasLead # 선행차 와의 거리가 나오나..??? 
-
+    
     hudControl.rightLaneVisible = True
     hudControl.leftLaneVisible = True
-
+    
+    lead_model = self.sm['modelV2'].leadsV3[0] # 음... 맞나..???
+    hudControl.objDist = lead_model.x[0] - RADAR_TO_CAMERA if lead_model.prob > .5 else 0 # 음... 맞나..??? 
     recent_blinker = (self.sm.frame - self.last_blinker_frame) * DT_CTRL < 5.0  # 5s blinker cooldown
     ldw_allowed = self.is_ldw_enabled and CS.vEgo > LDW_MIN_SPEED and not recent_blinker \
                   and not CC.latActive and self.sm['liveCalibration'].calStatus == Calibration.CALIBRATED

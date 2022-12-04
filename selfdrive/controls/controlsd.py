@@ -675,7 +675,8 @@ class Controls:
 
   def publish_logs(self, CS, start_time, CC, lac_log):
     """Send actuators and hud commands to the car, send controlsstate and MPC logging"""
-
+    lead_model = None
+    vision_dist = None
     # Orientation and angle rates can be useful for carcontroller
     # Only calibrated (car) frame is relevant for the carcontroller
     orientation_value = list(self.sm['liveLocationKalman'].calibratedOrientationNED.value)
@@ -703,8 +704,8 @@ class Controls:
     hudControl.rightLaneVisible = True
     hudControl.leftLaneVisible = True
     
-    lead_model = self.sm['modelV2'].leadsV3[0] # 선행차 와의 거리 (비젼 측정값...)
-    vision_dist = lead_model.x[0] - RADAR_TO_CAMERA if lead_model.prob > .5 else 0 # 
+    lead_model = self.sm['modelV2'].leadsV3 # 선행차 와의 거리 (비젼 측정값...)
+    vision_dist = lead_model[0].x[0] - RADAR_TO_CAMERA if lead_model.prob > .5 else 0 # 
     hudControl.objDist = int(vision_dist)
     
     recent_blinker = (self.sm.frame - self.last_blinker_frame) * DT_CTRL < 5.0  # 5s blinker cooldown

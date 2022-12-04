@@ -703,6 +703,7 @@ class Controls:
     hudControl.rightLaneVisible = True
     hudControl.leftLaneVisible = True
     
+    hudControl.objDist = 0 # 값 
     lead_model = self.sm['modelV2'].leadsV3 # 선행차 와의 거리 (비젼 측정값...)
     if len(lead_model) :
       vision_dist = lead_model[0].x[0] - RADAR_TO_CAMERA if lead_model[0].prob > .5 else 0 # 

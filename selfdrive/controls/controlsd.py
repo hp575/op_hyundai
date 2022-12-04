@@ -703,8 +703,10 @@ class Controls:
     hudControl.rightLaneVisible = True
     hudControl.leftLaneVisible = True
     
-    lead_model = self.sm['modelV2'].leadsV3[0] # 음... 맞나..???
-    hudControl.objDist = lead_model.x[0] - RADAR_TO_CAMERA if lead_model.prob > .5 else 0 # 음... 맞나..??? 
+    lead_model = self.sm['modelV2'].leadsV3[0] # 선행차 와의 거리 (비젼 측정값...)
+    vision_dist = lead_model.x[0] - RADAR_TO_CAMERA if lead_model.prob > .5 else 0 # 
+    hudControl.objDist = int(vision_dist)
+    
     recent_blinker = (self.sm.frame - self.last_blinker_frame) * DT_CTRL < 5.0  # 5s blinker cooldown
     ldw_allowed = self.is_ldw_enabled and CS.vEgo > LDW_MIN_SPEED and not recent_blinker \
                   and not CC.latActive and self.sm['liveCalibration'].calStatus == Calibration.CALIBRATED

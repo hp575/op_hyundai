@@ -47,7 +47,7 @@ class CarState(CarStateBase):
     self.params = CarControllerParams(CP)
     self.mdps_error_cnt = 0
     self.cruise_unavail_cnt = 0
-    self.gear_shifter = GearShifter.drive # Gear_init for Nexo ?? unknown 21.02.23.LSW
+    #self.gear_shifter = GearShifter.drive # Gear_init for Nexo ?? unknown 21.02.23.LSW
 
   def update(self, cp, cp_cam):
     if self.CP.carFingerprint in CANFD_CAR:
@@ -145,6 +145,7 @@ class CarState(CarStateBase):
       gear = cp.vl["TCU12"]["CUR_GR"]
     elif self.CP.carFingerprint in FEATURES["use_elect_gears"]:
       gear = cp.vl["ELECT_GEAR"]["Elect_Gear_Shifter"]
+      """
       gear_disp = cp.vl["ELECT_GEAR"]
 
       gear_shifter = GearShifter.unknown
@@ -162,10 +163,11 @@ class CarState(CarStateBase):
         self.gear_shifter = gear_shifter
 
       ret.gearShifter = self.gear_shifter
+      """
     else:
       gear = cp.vl["LVR12"]["CF_Lvr_Gear"]
 
-    #ret.gearShifter = self.parse_gear_shifter(self.shifter_values.get(gear))
+    ret.gearShifter = self.parse_gear_shifter(self.shifter_values.get(gear))
 
     if not self.CP.openpilotLongitudinalControl or self.CP.sccBus == 2:
       aeb_src = "FCA11" if self.CP.carFingerprint in FEATURES["use_fca"] else "SCC12"

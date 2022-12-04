@@ -705,7 +705,7 @@ class Controls:
     hudControl.leftLaneVisible = True
     
     lead_model = self.sm['modelV2'].leadsV3 # 선행차 와의 거리 (비젼 측정값...)
-    vision_dist = lead_model[0].x[0] - RADAR_TO_CAMERA if lead_model.prob > .5 else 0 # 
+    vision_dist = lead_model[0].x[0] - RADAR_TO_CAMERA if lead_model[0].prob > .5 else 0 # 
     hudControl.objDist = int(vision_dist)
     
     recent_blinker = (self.sm.frame - self.last_blinker_frame) * DT_CTRL < 5.0  # 5s blinker cooldown

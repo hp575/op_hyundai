@@ -674,9 +674,8 @@ class Controls:
     return CC, lac_log
 
   def publish_logs(self, CS, start_time, CC, lac_log):
+    
     """Send actuators and hud commands to the car, send controlsstate and MPC logging"""
-    lead_model = None
-    vision_dist = None
     # Orientation and angle rates can be useful for carcontroller
     # Only calibrated (car) frame is relevant for the carcontroller
     orientation_value = list(self.sm['liveLocationKalman'].calibratedOrientationNED.value)

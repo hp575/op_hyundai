@@ -203,7 +203,6 @@ static int hyundai_rx_hook(CANPacket_t *to_push) {
   if (valid && (addr == 1056)) { //  MainMode_ACC
     // 1 bits: 0
     int cruise_available = (GET_BYTES_04(to_push)) & 0x1U;
-    puth(cruise_available);print(" = cruise_available\n");
     hyundai_common_cruise_state_check(cruise_available);
   }
 
@@ -218,8 +217,6 @@ static int hyundai_rx_hook(CANPacket_t *to_push) {
     if (addr == 1265) {
       int cruise_button = GET_BYTE(to_push, 0) & 0x7U;
       int main_button = GET_BIT(to_push, 3U);
-      puth(cruise_button);print(" = cruise_button\n");
-      puth(main_button);print(" = main_button\n");
       hyundai_common_cruise_buttons_check(cruise_button, main_button);
     }
 
@@ -263,7 +260,7 @@ uint32_t last_ts_lkas11_from_op = 0;
 uint32_t last_ts_scc12_from_op = 0;
 uint32_t last_ts_mdps12_from_op = 0;
 
-static int hyundai_tx_hook(CANPacket_t *to_send, bool longitudinal_allowed) {
+static int hyundai_tx_hook(CANPacket_t *to_send) {
 
   int tx = 1;
   int addr = GET_ADDR(to_send);
@@ -297,8 +294,8 @@ static int hyundai_tx_hook(CANPacket_t *to_send, bool longitudinal_allowed) {
 
     bool violation = false;
 
-    violation |= longitudinal_accel_checks(desired_accel_raw, HYUNDAI_LONG_LIMITS, longitudinal_allowed);
-    violation |= longitudinal_accel_checks(desired_accel_val, HYUNDAI_LONG_LIMITS, longitudinal_allowed);
+    violation |= longitudinal_accel_checks(desired_accel_raw, HYUNDAI_LONG_LIMITS);
+    violation |= longitudinal_accel_checks(desired_accel_val, HYUNDAI_LONG_LIMITS);
     violation |= (aeb_decel_cmd != 0);
     violation |= (aeb_req != 0);
 

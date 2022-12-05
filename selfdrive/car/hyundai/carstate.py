@@ -9,7 +9,7 @@ from opendbc.can.parser import CANParser
 from opendbc.can.can_define import CANDefine
 from selfdrive.car.hyundai.interface import BUTTONS_DICT
 from selfdrive.controls.neokii.cruise_state_manager import CruiseStateManager
-from selfdrive.car.hyundai.values import HyundaiFlags, DBC, FEATURES, CANFD_CAR, EV_CAR, HYBRID_CAR, Buttons, CarControllerParams
+from selfdrive.car.hyundai.values import HyundaiFlags, CAR, DBC, FEATURES, CANFD_CAR, EV_CAR, HYBRID_CAR, Buttons, CarControllerParams
 from selfdrive.car.interfaces import CarStateBase
 
 PREV_BUTTON_SAMPLES = 8
@@ -145,29 +145,13 @@ class CarState(CarStateBase):
       gear = cp.vl["TCU12"]["CUR_GR"]
     elif self.CP.carFingerprint in FEATURES["use_elect_gears"]:
       gear = cp.vl["ELECT_GEAR"]["Elect_Gear_Shifter"]
-      """
-      gear_disp = cp.vl["ELECT_GEAR"]
-
       gear_shifter = GearShifter.unknown
-
-      if gear == 1546:  # Thank you for Neokii  # fix PolorBear 22.06.05
-        gear_shifter = GearShifter.drive
-      elif gear == 2314:
-        gear_shifter = GearShifter.neutral
-      elif gear == 2569:
-        gear_shifter = GearShifter.park
-      elif gear == 2566:
-        gear_shifter = GearShifter.reverse
-
       if gear_shifter != GearShifter.unknown and self.gear_shifter != gear_shifter:
-        self.gear_shifter = gear_shifter
-
+        self.gear_shifter = self.parse_gear_shifter(self.shifter_values.get(gear))
       ret.gearShifter = self.gear_shifter
-      """
     else:
       gear = cp.vl["LVR12"]["CF_Lvr_Gear"]
-
-    ret.gearShifter = self.parse_gear_shifter(self.shifter_values.get(gear))
+      
 
     if not self.CP.openpilotLongitudinalControl or self.CP.sccBus == 2:
       aeb_src = "FCA11" if self.CP.carFingerprint in FEATURES["use_fca"] else "SCC12"
@@ -283,7 +267,9 @@ class CarState(CarStateBase):
       ret.rightBlindspot = cp.vl["BLINDSPOTS_REAR_CORNERS"]["FR_INDICATOR"] != 0
 
     ret.cruiseState.available = True
-    self.is_metric = cp.vl["CLUSTER_INFO"]["DISTANCE_UNIT"] != 1
+    cruise_btn_msg = "CRUISE_BUTTONS_ALT" if self.CP.flags & HyundaiFlags.CANFD_ALT_BUTTONS else "CRUISE_BUTTONS"
+    distance_unit_msg = cruise_btn_msg if self.CP.carFingerprint == CAR.KIA_SORENTO_PHEV_4TH_GEN else "CLUSTER_INFO"
+    self.is_metric = cp.vl[distance_unit_msg]["DISTANCE_UNIT"] != 1
     if not self.CP.openpilotLongitudinalControl:
       speed_factor = CV.KPH_TO_MS if self.is_metric else CV.MPH_TO_MS
       cp_cruise_info = cp_cam if self.CP.flags & HyundaiFlags.CANFD_CAMERA_SCC else cp
@@ -292,7 +278,6 @@ class CarState(CarStateBase):
       ret.cruiseState.enabled = cp_cruise_info.vl["SCC_CONTROL"]["ACCMode"] in (1, 2)
       self.cruise_info = copy.copy(cp_cruise_info.vl["SCC_CONTROL"])
     
-    cruise_btn_msg = "CRUISE_BUTTONS_ALT" if self.CP.flags & HyundaiFlags.CANFD_ALT_BUTTONS else "CRUISE_BUTTONS"
     self.prev_cruise_buttons = self.cruise_buttons[-1]
     self.cruise_buttons.extend(cp.vl_all[cruise_btn_msg]["CRUISE_BUTTONS"])
     self.main_buttons.extend(cp.vl_all[cruise_btn_msg]["ADAPTIVE_CRUISE_MAIN_BTN"])
@@ -361,6 +346,7 @@ class CarState(CarStateBase):
       ("BrakeLight", "TCS13"),
       ("aBasis", "TCS13"),
       ("DriverBraking", "TCS13"),
+      ("StandStill", "TCS13"),
 
       ("PBRAKE_ACT", "TCS13"),
       ("DriverOverride", "TCS13"),
@@ -622,7 +608,9 @@ class CarState(CarStateBase):
       ("DRIVER_DOOR_OPEN", "DOORS_SEATBELTS"),
       ("DRIVER_SEATBELT_LATCHED", "DOORS_SEATBELTS"),
     ]
-
+    if CP.carFingerprint == CAR.KIA_SORENTO_PHEV_4TH_GEN:
+      signals.append(("DISTANCE_UNIT", cruise_btn_msg))
+      
     checks = [
       ("WHEEL_SPEEDS", 100),
       ("GEAR_SHIFTER", 100),

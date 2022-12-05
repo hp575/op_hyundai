@@ -145,13 +145,23 @@ class CarState(CarStateBase):
       gear = cp.vl["TCU12"]["CUR_GR"]
     elif self.CP.carFingerprint in FEATURES["use_elect_gears"]:
       gear = cp.vl["ELECT_GEAR"]["Elect_Gear_Shifter"]
+<<<<<<< HEAD
+=======
+      gear_disp = cp.vl["ELECT_GEAR"]
+
+>>>>>>> parent of e7c2577d (기어 테스트 ... 콤마공식 처럼...???)
       gear_shifter = GearShifter.unknown
       if gear_shifter != GearShifter.unknown and self.gear_shifter != gear_shifter:
         self.gear_shifter = self.parse_gear_shifter(self.shifter_values.get(gear))
       ret.gearShifter = self.gear_shifter
     else:
       gear = cp.vl["LVR12"]["CF_Lvr_Gear"]
+<<<<<<< HEAD
       
+=======
+
+    #ret.gearShifter = self.parse_gear_shifter(self.shifter_values.get(gear))
+>>>>>>> parent of e7c2577d (기어 테스트 ... 콤마공식 처럼...???)
 
     if not self.CP.openpilotLongitudinalControl or self.CP.sccBus == 2:
       aeb_src = "FCA11" if self.CP.carFingerprint in FEATURES["use_fca"] else "SCC12"

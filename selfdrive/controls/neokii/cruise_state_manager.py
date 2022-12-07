@@ -103,7 +103,7 @@ class CruiseStateManager:
       
     if self.enabled :
       CS.cruiseState.enabled = self.enabled
-      #print('cruiseState.enabled')
+
 
     #print('cruise_state_control - TRUE  = {},{},{},{}'.format(CS.cruiseState.enabled,CS.cruiseState.standstill,CS.cruiseState.standstill,CS.cruiseState.speed,CS.cruiseState.gapAdjust))
     #print('cruise_state_control - FALSE  = {},{},{},{}'.format(self.enabled,False,self.speed,self.gapAdjust))
@@ -176,9 +176,10 @@ class CruiseStateManager:
       put_nonblocking("SccGapAdjust", str(self.gapAdjust))
       
     if btn == ButtonType.cancel:
-      if not self.enabled :
+      if not CS.longActive :
         self.available = False # 메드 모드 일때 디스인게이지 시킴..
-      self.enabled = False # 메드모드로 변경함. 
+      else:
+        self.enabled = False # 메드모드로 변경함.  
     
     v_cruise_kph = clip(round(v_cruise_kph, 1), V_CRUISE_MIN_CRUISE_STATE, V_CRUISE_MAX)
     self.speed = v_cruise_kph * CV.MPH_TO_KPH

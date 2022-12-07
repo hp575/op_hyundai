@@ -30,7 +30,7 @@ COST_E_DIM = 5
 COST_DIM = COST_E_DIM + 1
 CONSTR_DIM = 4
 
-X_EGO_OBSTACLE_COST = 3.
+X_EGO_OBSTACLE_COST = 6. #  가야할거리를 제한한다. 높이면 가야할 거리에 집중함.
 X_EGO_COST = 0.
 V_EGO_COST = 0.
 A_EGO_COST = 0.

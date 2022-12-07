@@ -253,9 +253,9 @@ class CarInterface(CarInterfaceBase):
       ret.experimentalLongitudinalAvailable = candidate in (HYBRID_CAR | EV_CAR) and candidate not in CANFD_RADAR_SCC_CAR
     else:
       ret.longitudinalTuning.kpBP = [0., 5. * CV.KPH_TO_MS, 10. * CV.KPH_TO_MS, 30. * CV.KPH_TO_MS, 130. * CV.KPH_TO_MS]
-      ret.longitudinalTuning.kpV = [1.4, 1.25, 1.0, 0.92, 0.55]
+      ret.longitudinalTuning.kpV = [1.5, 1.35, 1.1, 0.98, 0.70]
       ret.longitudinalTuning.kiBP = [0., 130. * CV.KPH_TO_MS]
-      ret.longitudinalTuning.kiV = [0.1, 0.05]
+      ret.longitudinalTuning.kiV = [0.15, 0.08]
       ret.stoppingDecelRate = 0.3
       
       ret.steerActuatorDelay = 0.2

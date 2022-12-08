@@ -176,7 +176,7 @@ class CruiseStateManager:
       put_nonblocking("SccGapAdjust", str(self.gapAdjust))
       
     if btn == ButtonType.cancel:
-      if not CS.longActive :
+      if not CS.cruiseState.enabled :
         self.available = False # 메드 모드 일때 디스인게이지 시킴..
       else:
         self.enabled = False # 메드모드로 변경함.  

@@ -23,6 +23,7 @@ MAX_ANGLE = 85
 MAX_ANGLE_FRAMES = 89
 MAX_ANGLE_CONSECUTIVE_FRAMES = 2
 
+
 def process_hud_alert(enabled, fingerprint, hud_control):
   sys_warning = (hud_control.visualAlert in (VisualAlert.steerRequired, VisualAlert.ldw))
 
@@ -77,9 +78,6 @@ class CarController:
 
     # steering torque
     steer = actuators.steer
-    if self.CP.carFingerprint in (CAR.KONA, CAR.KONA_EV, CAR.KONA_HEV, CAR.KONA_EV_2022):
-      # these cars have significantly more torque than most HKG; limit to 70% of max
-      steer = clip(steer, -0.7, 0.7)
     new_steer = int(round(steer * self.params.STEER_MAX))
     apply_steer = apply_std_steer_torque_limits(new_steer, self.apply_steer_last, CS.out.steeringTorque, self.params)
 

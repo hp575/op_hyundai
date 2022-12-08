@@ -176,11 +176,9 @@ class CruiseStateManager:
       put_nonblocking("SccGapAdjust", str(self.gapAdjust))
       
     if btn == ButtonType.cancel:
-      if self.enabled : # 롱컨 중이라면 
-        self.enabled = False # 메드모드로 변경함.
-        CS.cruiseState.enabled = self.enabled
-      else:# 메드 모드 라면 디스인게이지 시킴..
+      if not self.enabled :
         self.available = False
+      self.enabled = False # 메드모드로 변경함.  
     
     v_cruise_kph = clip(round(v_cruise_kph, 1), V_CRUISE_MIN_CRUISE_STATE, V_CRUISE_MAX)
     self.speed = v_cruise_kph * CV.MPH_TO_KPH

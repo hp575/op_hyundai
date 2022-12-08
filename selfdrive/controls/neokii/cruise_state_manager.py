@@ -177,7 +177,8 @@ class CruiseStateManager:
       
     if btn == ButtonType.cancel:
       if self.enabled : # 롱컨 중이라면 
-        self.enabled = False # 메드모드로 변경함.  
+        self.enabled = False # 메드모드로 변경함.
+        CS.cruiseState.enabled = self.enabled
       else:# 메드 모드 라면 디스인게이지 시킴..
         self.available = False
     

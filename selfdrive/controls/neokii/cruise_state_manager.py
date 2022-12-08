@@ -96,7 +96,7 @@ class CruiseStateManager:
     CS.cruiseState.available = self.available
 
     if cruise_state_control:
-      #CS.cruiseState.enabled = self.enabled
+      CS.cruiseState.enabled = False
       CS.cruiseState.standstill = False
       CS.cruiseState.speed = self.speed
       CS.cruiseState.gapAdjust = self.gapAdjust
@@ -161,13 +161,13 @@ class CruiseStateManager:
         if btn == ButtonType.decelCruise and not self.enabled:
           self.enabled = True
           v_cruise_kph = CS.vEgoCluster * CV.MS_TO_KPH
-          if CS.vEgoCluster < 0.1:
-            v_cruise_kph = clip(round(v_cruise_kph, 1), V_CRUISE_ENABLE_MIN, V_CRUISE_MAX)
-          else:
+          if CS.vEgoCluster < 0.1: # 정지중일때
+            v_cruise_kph = clip(round(v_cruise_kph, 1), V_CRUISE_ENABLE_MIN, V_CRUISE_MAX) #최소값30으로 세팅
+          else: # 이동중 일때... 
             v_cruise_kph = clip(round(v_cruise_kph, 1), V_CRUISE_MIN_CRUISE_STATE, V_CRUISE_MAX)
         elif btn == ButtonType.accelCruise and not self.enabled:
           self.enabled = True
-          v_cruise_kph = clip(round(self.speed * CV.MS_TO_KPH, 1), V_CRUISE_ENABLE_MIN, V_CRUISE_MAX)
+          v_cruise_kph = clip(round(self.speed * CV.MS_TO_KPH, 1), V_CRUISE_ENABLE_MIN, V_CRUISE_MAX) # 이전값 복원...
     
     if btn == ButtonType.gapAdjustCruise and not self.btn_long_pressed:
       self.gapAdjust -= 1

@@ -11,7 +11,6 @@ V_CRUISE_MIN_CRUISE_STATE = 10
 
 V_CRUISE_DELTA_MI = 5 * CV.MPH_TO_KPH
 V_CRUISE_DELTA_KM = 10
-prev_enabled = False
 ButtonType = car.CarState.ButtonEvent.Type
 
 def is_radar_disabler(CP):
@@ -89,7 +88,6 @@ class CruiseStateManager:
       
     if not self.available: # 이건 디스인게이지 상태..
       self.enabled = False
-      prev_enabled = self.enabled
       
     if self.prev_brake_pressed != CS.brakePressed and CS.brakePressed:
       self.enabled = False
@@ -105,7 +103,6 @@ class CruiseStateManager:
       
     if self.enabled : # 롱컨 시작
       CS.cruiseState.enabled = self.enabled
-      prev_enabled = self.enabled
 
 
     #print('cruise_state_control - TRUE  = {},{},{},{}'.format(CS.cruiseState.enabled,CS.cruiseState.standstill,CS.cruiseState.standstill,CS.cruiseState.speed,CS.cruiseState.gapAdjust))
@@ -167,10 +164,7 @@ class CruiseStateManager:
           if CS.vEgoCluster < 0.1: # 정지중일때
             v_cruise_kph = clip(round(v_cruise_kph, 1), V_CRUISE_ENABLE_MIN, V_CRUISE_MAX) #최소값30으로 세팅
           else: # 이동중 일때... 
-            if self.available and prev_enabled:
-              v_cruise_kph = clip(round(self.speed * CV.MS_TO_KPH, 1), V_CRUISE_ENABLE_MIN, V_CRUISE_MAX) # 이전값 복원...
-            else :
-              v_cruise_kph = clip(round(v_cruise_kph, 1), V_CRUISE_MIN_CRUISE_STATE, V_CRUISE_MAX)
+            v_cruise_kph = clip(round(v_cruise_kph, 1), V_CRUISE_MIN_CRUISE_STATE, V_CRUISE_MAX)
         elif btn == ButtonType.accelCruise and not self.enabled:
           self.enabled = True
           v_cruise_kph = clip(round(self.speed * CV.MS_TO_KPH, 1), V_CRUISE_ENABLE_MIN, V_CRUISE_MAX) # 이전값 복원...
@@ -185,7 +179,6 @@ class CruiseStateManager:
       if not self.enabled :
         self.available = False
         prev_enabled = self.available
-      prev_enabled = self.enabled
       self.enabled = False # 메드모드로 변경함.
     
     v_cruise_kph = clip(round(v_cruise_kph, 1), V_CRUISE_MIN_CRUISE_STATE, V_CRUISE_MAX)

@@ -178,7 +178,6 @@ class CruiseStateManager:
     if btn == ButtonType.cancel:
       if not self.enabled :
         self.available = False
-        prev_enabled = self.available
       self.enabled = False # 메드모드로 변경함.
     
     v_cruise_kph = clip(round(v_cruise_kph, 1), V_CRUISE_MIN_CRUISE_STATE, V_CRUISE_MAX)

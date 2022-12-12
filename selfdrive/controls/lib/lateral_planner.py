@@ -23,7 +23,7 @@ LATERAL_JERK_COST = 0.05
 # when it does not cause bad jerk.
 # TODO this cost should be lowered when low
 # speed lateral control is stable on all cars
-STEERING_RATE_COST = 2400.0
+STEERING_RATE_COST = 800.0 # 값을 줄여야..???? 이건 우선 고민해 보자...
 
 
 class LateralPlanner:

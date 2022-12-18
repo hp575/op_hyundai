@@ -571,7 +571,7 @@ class Controls:
 
     if ntune_common_enabled('useLiveSteerRatio'):
       sr = max(lp.steerRatio, 0.1)
-      #sr = sr - (sr * 0.09)
+      sr = sr - (sr * 0.1)
     else:
       sr = max(ntune_common_get('steerRatio'), 0.1)
 
@@ -708,11 +708,8 @@ class Controls:
     lead_radar = self.sm['radarState'].leadOne # 선행차 와의 거리 (레이다 측정값...)
     if len(lead_model) : #비전에서 측정 결과가 있을때...
       vision_dist = lead_model[0].x[0] - RADAR_TO_CAMERA if lead_model[0].prob > .5 else 0 #(비젼 측정값...)
-      radar_dist = lead_radar.dRel if lead_radar.status and lead_radar.radar else 0 #(레이다 측정값...)
-      if vision_dist <= 0. and radar_dist >=0.:
-        hudControl.objDist = int(radar_dist)
-      else:
-        hudControl.objDist = int(vision_dist)
+      #radar_dist = lead_radar.dRel if lead_radar.status and lead_radar.radar else 0 #(레이다 측정값...)
+      hudControl.objDist = int(vision_dist)
     else : # 비젼 결과가 없으면... 레이다...
       radar_dist = lead_radar.dRel if lead_radar.status and lead_radar.radar else 0 #레이다
       hudControl.objDist = int(radar_dist)

@@ -539,6 +539,7 @@ void CameraState::camera_set_parameters() {
     analog_gain_rec_idx = ANALOG_GAIN_REC_IDX_AR0231;
     analog_gain_max_idx = ANALOG_GAIN_MAX_IDX_AR0231;
     analog_gain_cost_delta = ANALOG_GAIN_COST_DELTA_AR0231;
+    analog_gain_cost_low = ANALOG_GAIN_COST_LOW_AR0231;
     analog_gain_cost_high = ANALOG_GAIN_COST_HIGH_AR0231;
     for (int i=0; i<=analog_gain_max_idx; i++) {
       sensor_analog_gains[i] = sensor_analog_gains_AR0231[i];

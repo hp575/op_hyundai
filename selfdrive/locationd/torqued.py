@@ -99,7 +99,7 @@ class TorqueEstimator:
     return ntune_torque_get('friction')
 
   def get_lat_accel_factor(self):
-    return ntune_torque_get('latAccelFactor') + 1.0
+    return ntune_torque_get('latAccelFactor')
 
   def __init__(self, CP, decimated=False):
     self.hist_len = int(HISTORY / DT_MDL)

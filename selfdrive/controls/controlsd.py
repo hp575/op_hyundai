@@ -569,7 +569,7 @@ class Controls:
 
     if ntune_common_enabled('useLiveSteerRatio'):
       sr = max(lp.steerRatio, 0.1)
-      sr = sr - (sr * 0.05) # 넥쏘의 SteerRatio 는 14.19 이다.
+      sr *= 0.94  # 넥쏘의 SteerRatio 는 14.19 이다.  학습 값의 94%를 사용함./
     else:
       sr = max(ntune_common_get('steerRatio'), 0.1)
 

@@ -322,6 +322,7 @@ class CarInterface(CarInterfaceBase):
         ret.hasScc14 = 905 in fingerprint[0] or 905 in fingerprint[2]
         ret.openpilotLongitudinalControl = True
         ret.radarUnavailable = False
+        ret.safetyConfigs = [get_safety_config(car.CarParams.SafetyModel.hyundaiLegacy)]
 
     if ret.openpilotLongitudinalControl and ret.sccBus == 0 and Params().get_bool('CruiseStateControl'):
       ret.pcmCruise = False # pcmCruise 가 false 여야 롱컨이됨..??

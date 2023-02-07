@@ -250,8 +250,8 @@ class CarInterfaceBase(ABC):
                            enable_buttons=(ButtonType.accelCruise, ButtonType.decelCruise)):
     events = Events()
 
-    if cs_out.doorOpen:
-      events.add(EventName.doorOpen)
+    #if cs_out.doorOpen:
+      #events.add(EventName.doorOpen)
     if cs_out.seatbeltUnlatched:
       events.add(EventName.seatbeltNotLatched)
     if cs_out.gearShifter != GearShifter.drive and (extra_gears is None or
@@ -428,15 +428,15 @@ class CarStateBase(ABC):
       return GearShifter.unknown
 
     d: Dict[str, car.CarState.GearShifter] = {
-        'P': GearShifter.park, 'PARK': GearShifter.park,
-        'R': GearShifter.reverse, 'REVERSE': GearShifter.reverse,
-        'N': GearShifter.neutral, 'NEUTRAL': GearShifter.neutral,
-        'E': GearShifter.eco, 'ECO': GearShifter.eco,
-        'T': GearShifter.manumatic, 'MANUAL': GearShifter.manumatic,
-        'D': GearShifter.drive, 'DRIVE': GearShifter.drive,
-        'S': GearShifter.sport, 'SPORT': GearShifter.sport,
-        'L': GearShifter.low, 'LOW': GearShifter.low,
-        'B': GearShifter.brake, 'BRAKE': GearShifter.brake,
+      'P': GearShifter.park, 'PARK': GearShifter.park,
+      'R': GearShifter.reverse, 'REVERSE': GearShifter.reverse,
+      'N': GearShifter.neutral, 'NEUTRAL': GearShifter.neutral,
+      'E': GearShifter.eco, 'ECO': GearShifter.eco,
+      'T': GearShifter.manumatic, 'MANUAL': GearShifter.manumatic,
+      'D': GearShifter.drive, 'DRIVE': GearShifter.drive,
+      'S': GearShifter.sport, 'SPORT': GearShifter.sport,
+      'L': GearShifter.low, 'LOW': GearShifter.low,
+      'B': GearShifter.brake, 'BRAKE': GearShifter.brake,
     }
     return d.get(gear.upper(), GearShifter.unknown)
 

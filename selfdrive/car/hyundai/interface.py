@@ -38,7 +38,7 @@ class CarInterface(CarInterfaceBase):
   def _get_params(ret, candidate, fingerprint, car_fw, experimental_long):
 
     ret.carName = "hyundai"
-    ret.radarOffCan = RADAR_START_ADDR not in fingerprint[1] or DBC[ret.carFingerprint]["radar"] is None
+    ret.radarUnavailable = RADAR_START_ADDR not in fingerprint[1] or DBC[ret.carFingerprint]["radar"] is None
 
     # These cars have been put into dashcam only due to both a lack of users and test coverage.
     # These cars likely still work fine. Once a user confirms each car works and a test route is
@@ -190,7 +190,7 @@ class CarInterface(CarInterfaceBase):
       ret.wheelbase = 2.65
       ret.steerRatio = 13.75
       tire_stiffness_factor = 0.5
-    elif candidate == CAR.KIA_K5_2021:
+    elif candidate in (CAR.KIA_K5_2021, CAR.KIA_K5_HEV_2020):
       ret.mass = 3228. * CV.LB_TO_KG
       ret.wheelbase = 2.85
       ret.steerRatio = 13.27  # 2021 Kia K5 Steering Ratio (all trims)
@@ -315,20 +315,19 @@ class CarInterface(CarInterfaceBase):
       ret.hasNav = 1348 in fingerprint[0]
 
       if not ret.openpilotLongitudinalControl:
-        ret.radarOffCan = ret.sccBus == -1
+        ret.radarUnavailable = ret.sccBus == -1
 
       if ret.sccBus == 2 :
         ret.hasScc13 = 1290 in fingerprint[0] or 1290 in fingerprint[2]
         ret.hasScc14 = 905 in fingerprint[0] or 905 in fingerprint[2]
         ret.openpilotLongitudinalControl = True
-        ret.radarOffCan = False
-        #ret.safetyConfigs = [get_safety_config(car.CarParams.SafetyModel.hyundaiLegacy)]
+        ret.radarUnavailable = False
 
     if ret.openpilotLongitudinalControl and ret.sccBus == 0 and Params().get_bool('CruiseStateControl'):
       ret.pcmCruise = False # pcmCruise 가 false 여야 롱컨이됨..??
     else:
       ret.pcmCruise = True # managed by cruise state manager
-    ret.pcmCruise = False # 무조건 롱컨임... 뭐던지 간에...
+
     
     if ret.openpilotLongitudinalControl:
       ret.safetyConfigs[-1].safetyParam |= Panda.FLAG_HYUNDAI_LONG

@@ -71,6 +71,7 @@ class CarState(CarStateBase):
       cp.vl["WHL_SPD11"]["WHL_SPD_RL"],
       cp.vl["WHL_SPD11"]["WHL_SPD_RR"],
     )
+
     ######
     cluSpeed = cp.vl["CLU11"]["CF_Clu_Vanz"]
     decimal = cp.vl["CLU11"]["CF_Clu_VanzDecimal"]
@@ -87,8 +88,6 @@ class CarState(CarStateBase):
 
     ret.vCluRatio = (ret.vEgo / ret.vEgoCluster) if (ret.vEgoCluster > 3. and ret.vEgo > 3.) else 1.0
     #####
-    ret.vEgo, ret.aEgo = self.update_speed_kf(ret.vEgoRaw)
-    ret.standstill = ret.vEgoRaw < 0.1
 
     self.cluster_speed_counter += 1
     if self.cluster_speed_counter > CLUSTER_SAMPLE_RATE:
@@ -100,7 +99,6 @@ class CarState(CarStateBase):
       # TODO: CGW_USM1->CF_Gway_DrLockSoundRValue may describe this
       if not self.is_metric and self.CP.carFingerprint not in (CAR.KIA_SORENTO,):
         self.cluster_speed = math.floor(self.cluster_speed * CV.KPH_TO_MPH + CV.KPH_TO_MPH)
-
 
     ret.steeringAngleDeg = cp.vl["SAS11"]["SAS_Angle"]
     ret.steeringRateDeg = cp.vl["SAS11"]["SAS_Speed"]
@@ -116,7 +114,7 @@ class CarState(CarStateBase):
     if self.CP.openpilotLongitudinalControl and self.CP.sccBus == 0:
       # These are not used for engage/disengage since openpilot keeps track of state using the buttons
       ret.cruiseState.available = cp.vl["TCS13"]["ACCEnable"] == 0
-      ret.cruiseState.enabled = cp.vl["TCS13"]["ACC_REQ"] == 1 # 이값도 뭔가 영향이 있나..????
+      ret.cruiseState.enabled = cp.vl["TCS13"]["ACC_REQ"] == 1
       ret.cruiseState.standstill = False
     else:
       ret.cruiseState.available = cp_cruise.vl["SCC11"]["MainMode_ACC"] == 1
@@ -124,7 +122,7 @@ class CarState(CarStateBase):
       ret.cruiseState.standstill = cp_cruise.vl["SCC11"]["SCCInfoDisplay"] == 4.
       ret.cruiseState.speed = cp_cruise.vl["SCC11"]["VSetDis"] * speed_conv
       ret.cruiseState.gapAdjust = cp_cruise.vl["SCC11"]["TauGapSet"]
-    #print('cruise state  = {}'.format(ret.cruiseState.available))
+
     # TODO: Find brake pressure
     ret.brake = 0
     ret.brakePressed = cp.vl["TCS13"]["DriverBraking"] != 0
@@ -170,7 +168,6 @@ class CarState(CarStateBase):
 
     #ret.gearShifter = self.parse_gear_shifter(self.shifter_values.get(gear))
 
-
     if not self.CP.openpilotLongitudinalControl or self.CP.sccBus == 2:
       aeb_src = "FCA11" if self.CP.carFingerprint in FEATURES["use_fca"] else "SCC12"
       aeb_sig = "FCA_CmdAct" if self.CP.carFingerprint in FEATURES["use_fca"] else "AEB_CmdAct"
@@ -190,13 +187,13 @@ class CarState(CarStateBase):
     self.prev_cruise_buttons = self.cruise_buttons[-1]
     self.cruise_buttons.extend(cp.vl_all["CLU11"]["CF_Clu_CruiseSwState"])
     self.main_buttons.extend(cp.vl_all["CLU11"]["CF_Clu_CruiseSwMain"])
-    #print('self.main_buttons  = {}'.format(self.main_buttons.extend(cp.vl_all["CLU11"]["CF_Clu_CruiseSwMain"])))
+
     # ------------------------------------------------------------------------
     # custom
 
     self.cruise_unavail_cnt += 1 if cp.vl["TCS13"]["CF_VSM_Avail"] != 1 and cp.vl["TCS13"]["ACCEnable"] != 0 else -self.cruise_unavail_cnt
     self.brake_error = self.cruise_unavail_cnt > 100
-    
+
     self.mdps12 = copy.copy(cp.vl["MDPS12"])
     self.scc11 = copy.copy(cp_cruise.vl["SCC11"]) if "SCC11" in cp_cruise.vl else None
     self.scc12 = copy.copy(cp_cruise.vl["SCC12"]) if "SCC12" in cp_cruise.vl else None
@@ -228,10 +225,9 @@ class CarState(CarStateBase):
 
     if self.CP.hasAutoHold:
       ret.autoHold = cp.vl["ESP11"]["AVH_STAT"]
-    
+
     if self.CP.hasNav:
       ret.navSpeedLimit = cp.vl["Navi_HU"]["SpeedLim_Nav_Clu"]
-
 
     if self.CP.openpilotLongitudinalControl and CruiseStateManager.instance().cruise_state_control:
       available = ret.cruiseState.available if self.CP.sccBus == 2 else -1
@@ -241,7 +237,7 @@ class CarState(CarStateBase):
 
   def update_canfd(self, cp, cp_cam):
     ret = car.CarState.new_message()
-    
+
     self.is_metric = cp.vl["CRUISE_BUTTONS_ALT"]["DISTANCE_UNIT"] != 1
     speed_factor = CV.KPH_TO_MS if self.is_metric else CV.MPH_TO_MS
 
@@ -286,7 +282,7 @@ class CarState(CarStateBase):
       ret.leftBlindspot = cp.vl["BLINDSPOTS_REAR_CORNERS"]["FL_INDICATOR"] != 0
       ret.rightBlindspot = cp.vl["BLINDSPOTS_REAR_CORNERS"]["FR_INDICATOR"] != 0
 
-     # cruise state
+    # cruise state
     # CAN FD cars enable on main button press, set available if no TCS faults preventing engagement
     ret.cruiseState.available = cp.vl["TCS"]["ACCEnable"] == 0
     if self.CP.openpilotLongitudinalControl:
@@ -295,11 +291,11 @@ class CarState(CarStateBase):
       ret.cruiseState.standstill = False
     else:
       cp_cruise_info = cp_cam if self.CP.flags & HyundaiFlags.CANFD_CAMERA_SCC else cp
+      ret.cruiseState.enabled = cp_cruise_info.vl["SCC_CONTROL"]["ACCMode"] in (1, 2)
       ret.cruiseState.standstill = cp_cruise_info.vl["SCC_CONTROL"]["CRUISE_STANDSTILL"] == 1
       ret.cruiseState.speed = cp_cruise_info.vl["SCC_CONTROL"]["VSetDis"] * speed_factor
-      ret.cruiseState.enabled = cp_cruise_info.vl["SCC_CONTROL"]["ACCMode"] in (1, 2)
       self.cruise_info = copy.copy(cp_cruise_info.vl["SCC_CONTROL"])
-    
+
     cruise_btn_msg = "CRUISE_BUTTONS_ALT" if self.CP.flags & HyundaiFlags.CANFD_ALT_BUTTONS else "CRUISE_BUTTONS"
     self.prev_cruise_buttons = self.cruise_buttons[-1]
     self.cruise_buttons.extend(cp.vl_all[cruise_btn_msg]["CRUISE_BUTTONS"])
@@ -371,11 +367,10 @@ class CarState(CarStateBase):
       ("aBasis", "TCS13"),
       ("DriverBraking", "TCS13"),
       ("StandStill", "TCS13"),
-
       ("PBRAKE_ACT", "TCS13"),
       ("DriverOverride", "TCS13"),
       ("CF_VSM_Avail", "TCS13"),
-      
+
       ("ESC_Off_Step", "TCS15"),
       ("AVH_LAMP", "TCS15"),
 
@@ -399,8 +394,6 @@ class CarState(CarStateBase):
       ("PRESSURE_FR", "TPMS11"),
       ("PRESSURE_RL", "TPMS11"),
       ("PRESSURE_RR", "TPMS11"),
-
-
     ]
     checks = [
       # address, frequency
@@ -492,7 +485,7 @@ class CarState(CarStateBase):
         ("LDM_STAT", "ESP11"),
       ]
       checks += [("ESP11", 50)]
-    
+
     if CP.hasNav:
       signals += [("SpeedLim_Nav_Clu", "Navi_HU")]
       checks += [("Navi_HU", 5)]
@@ -605,15 +598,15 @@ class CarState(CarStateBase):
 
     cruise_btn_msg = "CRUISE_BUTTONS_ALT" if CP.flags & HyundaiFlags.CANFD_ALT_BUTTONS else "CRUISE_BUTTONS"
     gear_msg = "GEAR_ALT_2" if CP.flags & HyundaiFlags.CANFD_ALT_GEARS_2 else \
-            "GEAR_ALT" if CP.flags & HyundaiFlags.CANFD_ALT_GEARS else \
-            "GEAR_SHIFTER"
+               "GEAR_ALT" if CP.flags & HyundaiFlags.CANFD_ALT_GEARS else \
+               "GEAR_SHIFTER"
     signals = [
       ("WHEEL_SPEED_1", "WHEEL_SPEEDS"),
       ("WHEEL_SPEED_2", "WHEEL_SPEEDS"),
       ("WHEEL_SPEED_3", "WHEEL_SPEEDS"),
       ("WHEEL_SPEED_4", "WHEEL_SPEEDS"),
 
-      ("GEAR", "GEAR_SHIFTER"),
+      ("GEAR", gear_msg),
 
       ("STEERING_RATE", "STEERING_SENSORS"),
       ("STEERING_ANGLE", "STEERING_SENSORS"),
@@ -628,7 +621,6 @@ class CarState(CarStateBase):
       ("COUNTER", cruise_btn_msg),
       ("CRUISE_BUTTONS", cruise_btn_msg),
       ("ADAPTIVE_CRUISE_MAIN_BTN", cruise_btn_msg),
-
       ("DISTANCE_UNIT", "CRUISE_BUTTONS_ALT"),
 
       ("LEFT_LAMP", "BLINKERS"),
@@ -637,11 +629,10 @@ class CarState(CarStateBase):
       ("DRIVER_DOOR_OPEN", "DOORS_SEATBELTS"),
       ("DRIVER_SEATBELT_LATCHED", "DOORS_SEATBELTS"),
     ]
-      
+
     checks = [
       ("WHEEL_SPEEDS", 100),
-      ("GEAR_SHIFTER", 100),
-      ("BRAKE", 100),
+      (gear_msg, 100),
       ("STEERING_SENSORS", 100),
       ("MDPS", 100),
       ("TCS", 50),
@@ -652,7 +643,7 @@ class CarState(CarStateBase):
 
     if not (CP.flags & HyundaiFlags.CANFD_ALT_BUTTONS):
       checks.append(("CRUISE_BUTTONS", 50))
-          
+
     if CP.enableBsm:
       signals += [
         ("FL_INDICATOR", "BLINDSPOTS_REAR_CORNERS"),
@@ -685,6 +676,13 @@ class CarState(CarStateBase):
       ]
       checks += [
         ("ACCELERATOR_ALT", 100),
+      ]
+    else:
+      signals += [
+        ("ACCELERATOR_PEDAL_PRESSED", "ACCELERATOR_BRAKE_ALT"),
+      ]
+      checks += [
+        ("ACCELERATOR_BRAKE_ALT", 100),
       ]
 
     return CANParser(DBC[CP.carFingerprint]["pt"], signals, checks, get_e_can_bus(CP))

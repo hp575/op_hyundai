@@ -594,12 +594,9 @@ class CarState(CarStateBase):
   def get_can_parser_canfd(CP):
 
     cruise_btn_msg = "CRUISE_BUTTONS_ALT" if CP.flags & HyundaiFlags.CANFD_ALT_BUTTONS else "CRUISE_BUTTONS"
-<<<<<<< HEAD
     gear_msg = "GEAR_ALT_2" if CP.flags & HyundaiFlags.CANFD_ALT_GEARS_2 else \
                "GEAR_ALT" if CP.flags & HyundaiFlags.CANFD_ALT_GEARS else \
                "GEAR_SHIFTER"
-=======
->>>>>>> parent of d5765b32 (merge changes 0210)
     signals = [
       ("WHEEL_SPEED_1", "WHEEL_SPEEDS"),
       ("WHEEL_SPEED_2", "WHEEL_SPEEDS"),

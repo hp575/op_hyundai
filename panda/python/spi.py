@@ -9,8 +9,6 @@ from contextlib import contextmanager
 from functools import reduce
 from typing import List
 
-from .base import BaseHandle
-
 try:
   import spidev
 except ImportError:
@@ -80,7 +78,7 @@ class SpiDevice:
     self._spidev.close()
 
 
-class PandaSpiHandle(BaseHandle):
+class SpiHandle:
   """
   A class that mimics a libusb1 handle for panda SPI communications.
   """

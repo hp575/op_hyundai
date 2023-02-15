@@ -1,7 +1,5 @@
 import crcmod
-from selfdrive.car.hyundai.values import CAR, CHECKSUM
-from common.conversions import Conversions as CV
-from selfdrive.car.hyundai.values import FEATURES
+from selfdrive.car.hyundai.values import CAR, CHECKSUM, HyundaiFlags
 from selfdrive.controls.neokii.navi_controller import SpeedLimiter
 
 hyundai_checksum = crcmod.mkCrcFun(0x11D, initCrc=0xFD, rev=False, xorOut=0xdf)
@@ -9,7 +7,7 @@ hyundai_checksum = crcmod.mkCrcFun(0x11D, initCrc=0xFD, rev=False, xorOut=0xdf)
 def create_lkas11(packer, frame, car_fingerprint, apply_steer, steer_req,
                   torque_fault, lkas11, sys_warning, sys_state, enabled,
                   left_lane, right_lane,
-                  left_lane_depart, right_lane_depart, ldws_opt):
+                  left_lane_depart, right_lane_depart, ldws_opt, CP):
   values = lkas11
   values["CF_Lkas_LdwsSysState"] = sys_state
   values["CF_Lkas_SysWarning"] = 3 if sys_warning else 0
@@ -21,7 +19,7 @@ def create_lkas11(packer, frame, car_fingerprint, apply_steer, steer_req,
   values["CF_Lkas_MsgCount"] = frame % 0x10
   values["CF_Lkas_Chksum"] = 0
 
-  if car_fingerprint in FEATURES["send_lfa_mfa"]:
+  if CP.flags & HyundaiFlags.SEND_LFA.value:
     values["CF_Lkas_LdwsActivemode"] = int(left_lane) + (int(right_lane) << 1)
     values["CF_Lkas_LdwsOpt_USM"] = 2
 
@@ -101,10 +99,10 @@ def create_acc_commands(packer, enabled, accel, upper_jerk, idx, lead_visible, s
   commands = []
 
   cruise_enabled = enabled and CS.out.cruiseState.enabled
-  objGap = 0 if vision_dist == 0 else 2 if vision_dist < 25 else 3 if vision_dist < 40 else 4 if vision_dist < 70 else 5 
-  
+  objGap = 0 if vision_dist == 0 else 2 if vision_dist < 25 else 3 if vision_dist < 40 else 4 if vision_dist < 70 else 5
+
   scc11_values = {
-    "MainMode_ACC": CS.out.cruiseState.available, # SCC 모드 여부...
+    "MainMode_ACC": CS.out.cruiseState.available,
     "TauGapSet": CS.out.cruiseState.gapAdjust,
     "VSetDis": set_speed if cruise_enabled else 0,
     "AliveCounterACC": idx % 0x10,

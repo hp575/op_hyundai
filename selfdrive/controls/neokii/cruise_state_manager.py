@@ -94,12 +94,13 @@ class CruiseStateManager:
     self.prev_brake_pressed = CS.brakePressed
 
     CS.cruiseState.available = self.available
+    CS.cruiseState.gapAdjust = self.gapAdjust
 
     if cruise_state_control:
       CS.cruiseState.enabled = False
       CS.cruiseState.standstill = False
       CS.cruiseState.speed = self.speed
-      CS.cruiseState.gapAdjust = self.gapAdjust
+      #CS.cruiseState.gapAdjust = self.gapAdjust
       
     if self.enabled : # 롱컨 시작
       CS.cruiseState.enabled = self.enabled

@@ -96,7 +96,7 @@ class CruiseStateManager:
     CS.cruiseState.available = self.available
     CS.cruiseState.gapAdjust = self.gapAdjust
 
-    if cruise_state_control:
+    if cruise_state_control: # 크루즈 상태 제어 
       CS.cruiseState.enabled = False
       CS.cruiseState.standstill = False
       CS.cruiseState.speed = self.speed

@@ -11,6 +11,7 @@ from common.kalman.simple_kalman import KF1D
 from common.numpy_fast import clip, interp
 from common.realtime import DT_CTRL
 from selfdrive.car import apply_hysteresis, gen_empty_fingerprint, scale_rot_inertia, scale_tire_stiffness
+from selfdrive.car.hyundai.values import CANFD_CAR
 from selfdrive.controls.lib.drive_helpers import V_CRUISE_MAX, apply_center_deadzone
 from selfdrive.controls.lib.events import Events
 from selfdrive.controls.lib.vehicle_model import VehicleModel
@@ -305,7 +306,7 @@ class CarInterfaceBase(ABC):
 
     # we engage when pcm is active (rising edge)
     # enabling can optionally be blocked by the car interface
-    if pcm_enable:
+    if pcm_enable or self.CP.carFingerprint in CANFD_CAR :
       if cs_out.cruiseState.available and not self.CS.out.cruiseState.available or allow_enable:
         events.add(EventName.pcmEnable)
       elif not cs_out.cruiseState.available:

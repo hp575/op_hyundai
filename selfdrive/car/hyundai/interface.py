@@ -293,9 +293,9 @@ class CarInterface(CarInterfaceBase):
         ret.safetyConfigs[1].safetyParam |= Panda.FLAG_HYUNDAI_CAMERA_SCC
 
       ret.sccBus = 0
-
-      if 0x1fa in fingerprint[bus]:
-        ret.hasNav |= HyundaiFlags.SP_NAV_MSG.value
+      #print(fingerprint[bus])
+      #if 0x1fa in fingerprint[bus]:
+      ret.hasNav = 0x1fa in fingerprint[bus]
     else:
       if candidate in LEGACY_SAFETY_MODE_CAR:
         # these cars require a special panda safety mode due to missing counters and checksums in the messages

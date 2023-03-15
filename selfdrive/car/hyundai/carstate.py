@@ -684,7 +684,7 @@ class CarState(CarStateBase):
         ("ACCELERATOR_BRAKE_ALT", 100),
       ]
     
-    if CP.flags & HyundaiFlags.CANFD_HDA2 and CP.flags & HyundaiFlags.SP_NAV_MSG:
+    if CP.flags & HyundaiFlags.CANFD_HDA2 and ret.hasNav:
       signals.append(("SPEED_LIMIT_1", "CLUSTER_SPEED_LIMIT"))
       checks.append(("CLUSTER_SPEED_LIMIT", 10))
 
@@ -715,7 +715,7 @@ class CarState(CarStateBase):
         ("SCC_CONTROL", 50),
       ]
 
-    if not (CP.flags & HyundaiFlags.CANFD_HDA2) and CP.flags & HyundaiFlags.SP_NAV_MSG:
+    if not (CP.flags & HyundaiFlags.CANFD_HDA2) and ret.hasNav:
       signals.append(("SPEED_LIMIT_1", "CLUSTER_SPEED_LIMIT"))
       checks.append(("CLUSTER_SPEED_LIMIT", 10))
 

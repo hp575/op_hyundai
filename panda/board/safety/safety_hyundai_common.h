@@ -49,11 +49,13 @@ void hyundai_common_cruise_state_check(const int cruise_engaged) {
     if (cruise_engaged && !cruise_engaged_prev && (hyundai_last_button_interaction < HYUNDAI_PREV_BUTTON_SAMPLES)) {
       controls_allowed = 1;
     }
-
     //if (!cruise_engaged) {
     //  controls_allowed = 0;
     //}
     controls_allowed = 1;
+    print("hyundai_common_cruise_state_check\n");
+    print("cruise_engaged = ");puth(cruise_engaged);print("\n");
+    print("controls_allowed = ");puth(controls_allowed);print("\n");
     cruise_engaged_prev = cruise_engaged;
   }
 }

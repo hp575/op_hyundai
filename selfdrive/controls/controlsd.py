@@ -571,7 +571,7 @@ class Controls:
     #sr = max(lp.steerRatio, 0.1)
 
     if ntune_common_enabled('useLiveSteerRatio'):
-      sr = max(lp.steerRatio, 0.1) *0.953
+      sr = max(lp.steerRatio, 0.1) *0.913
     else:
       sr = max(ntune_common_get('steerRatio'), 0.1)
 

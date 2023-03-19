@@ -227,12 +227,12 @@ static int hyundai_canfd_rx_hook(CANPacket_t *to_push) {
 
   if (valid && (bus == scc_bus)) {
     // cruise state
-    bool chk = addr == 0x1a0;
-    print("cruise_engaged = ");puth(chk);print("\n");
-    if ((addr == 0x1a0) && !hyundai_longitudinal) {
+    //bool chk = addr == 0x1a0;
+    //print("cruise_engaged = ");puth(chk);print("\n");
+    //if ((addr == 0x1a0) && !hyundai_longitudinal) {
       bool cruise_engaged = ((GET_BYTE(to_push, 8) >> 4) & 0x3U) != 0U;
       hyundai_common_cruise_state_check(cruise_engaged);
-    }
+    //}
   }
 
   const int steer_addr = hyundai_canfd_hda2 ? 0x50 : 0x12a;

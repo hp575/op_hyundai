@@ -14,7 +14,8 @@ V_CRUISE_DELTA_KM = 10
 ButtonType = car.CarState.ButtonEvent.Type
 
 def is_radar_disabler(CP):
-  return CP.carFingerprint in CANFD_CAR or (CP.openpilotLongitudinalControl and CP.sccBus == 0)
+  return (CP.openpilotLongitudinalControl and CP.carFingerprint in CANFD_CAR) or \
+    (CP.openpilotLongitudinalControl and CP.sccBus == 0)
 
 
 class CruiseStateManager:
@@ -64,13 +65,13 @@ class CruiseStateManager:
     return self.is_resume_spam_allowed(CP)
 
   # CS - CarState cereal message
-  def update(self, CS, main_buttons, cruise_buttons, buttons_dict, available=-1, cruise_state_control=True):\
+  def update(self, CS, main_buttons, cruise_buttons, buttons_dict, available=-1, cruise_state_control=True):
 
     if available >= 0:
       self.available = available
     elif main_buttons[-1] != self.prev_main_buttons and main_buttons[-1]:
       self.available = not self.available
-     
+
     self.prev_main_buttons = main_buttons[-1]
 
     cruise_button = cruise_buttons[-1]
@@ -85,10 +86,10 @@ class CruiseStateManager:
     button = self.update_buttons()
     if button != ButtonType.unknown:
       self.update_cruise_state(CS, int(round(self.speed * CV.MPH_TO_KPH)), button)
-      
+
     if not self.available: # 이건 디스인게이지 상태..
       self.enabled = False
-      
+
     if self.prev_brake_pressed != CS.brakePressed and CS.brakePressed:
       self.enabled = False
     self.prev_brake_pressed = CS.brakePressed
@@ -101,20 +102,16 @@ class CruiseStateManager:
       CS.cruiseState.standstill = False
       CS.cruiseState.speed = self.speed
       #CS.cruiseState.gapAdjust = self.gapAdjust
-      
+
     if self.enabled : # 롱컨 시작
       CS.cruiseState.enabled = self.enabled
 
-
-    #print('cruise_state_control - TRUE  = {},{},{},{}'.format(CS.cruiseState.enabled,CS.cruiseState.standstill,CS.cruiseState.standstill,CS.cruiseState.speed,CS.cruiseState.gapAdjust))
-    #print('cruise_state_control - FALSE  = {},{},{},{}'.format(self.enabled,False,self.speed,self.gapAdjust))
-  
   def update_buttons(self):
     if self.button_events is None:
       return ButtonType.unknown
 
     btn = ButtonType.unknown
-    
+
     if self.btn_count > 0:
       self.btn_count += 1
 
@@ -143,7 +140,7 @@ class CruiseStateManager:
     return btn
 
   def update_cruise_state(self, CS, v_cruise_kph, btn):
-      
+
     if self.enabled:
       if not self.btn_long_pressed:
         if btn == ButtonType.accelCruise:
@@ -156,31 +153,31 @@ class CruiseStateManager:
           v_cruise_kph += v_cruise_delta - v_cruise_kph % v_cruise_delta
         elif btn == ButtonType.decelCruise:
           v_cruise_kph -= v_cruise_delta - -v_cruise_kph % v_cruise_delta
-   
     else:
+
       if not self.btn_long_pressed:
         if btn == ButtonType.decelCruise and not self.enabled:
           self.enabled = True
           v_cruise_kph = CS.vEgoCluster * CV.MS_TO_KPH
-          if CS.vEgoCluster < 0.1: # 정지중일때
-            v_cruise_kph = clip(round(v_cruise_kph, 1), V_CRUISE_ENABLE_MIN, V_CRUISE_MAX) #최소값30으로 세팅
-          else: # 이동중 일때... 
+          if CS.vEgoCluster < 0.1:
+            v_cruise_kph = clip(round(v_cruise_kph, 1), V_CRUISE_ENABLE_MIN, V_CRUISE_MAX)
+          else:
             v_cruise_kph = clip(round(v_cruise_kph, 1), V_CRUISE_MIN_CRUISE_STATE, V_CRUISE_MAX)
         elif btn == ButtonType.accelCruise and not self.enabled:
           self.enabled = True
-          v_cruise_kph = clip(round(self.speed * CV.MS_TO_KPH, 1), V_CRUISE_ENABLE_MIN, V_CRUISE_MAX) # 이전값 복원...
+          v_cruise_kph = clip(round(self.speed * CV.MS_TO_KPH, 1), V_CRUISE_ENABLE_MIN, V_CRUISE_MAX)
           v_cruise_kph = clip(v_cruise_kph, round(CS.vEgoCluster * CV.MS_TO_KPH, 1), V_CRUISE_MAX)
-    
+
     if btn == ButtonType.gapAdjustCruise and not self.btn_long_pressed:
       self.gapAdjust -= 1
       if self.gapAdjust < 1:
         self.gapAdjust = 4
       put_nonblocking("SccGapAdjust", str(self.gapAdjust))
-      
+
     if btn == ButtonType.cancel:
       if not self.enabled :
         self.available = False
       self.enabled = False # 메드모드로 변경함.
-    
+
     v_cruise_kph = clip(round(v_cruise_kph, 1), V_CRUISE_MIN_CRUISE_STATE, V_CRUISE_MAX)
     self.speed = v_cruise_kph * CV.MPH_TO_KPH
